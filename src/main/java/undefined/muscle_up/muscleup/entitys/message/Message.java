@@ -26,6 +26,6 @@ public class Message {
 
     private UserType type;
 
-    private String room_seq;
+    private String roomSeq;
 
 }
