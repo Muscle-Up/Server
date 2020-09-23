@@ -18,7 +18,7 @@ public class BodyImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer body_id;
+    private Integer bodyId;
 
-    private String image_name;
+    private String imageName;
 }
