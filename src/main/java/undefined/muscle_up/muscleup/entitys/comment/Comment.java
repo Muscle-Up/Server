@@ -22,9 +22,9 @@ public class Comment {
 
     private String content;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private Integer board_id;
+    private Integer boardId;
 
-    private Integer user_id;
+    private Integer userId;
 }
