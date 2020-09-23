@@ -18,7 +18,7 @@ public class MasterImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer user_id;
+    private Integer userId;
 
-    private String image_name;
+    private String imageName;
 }
