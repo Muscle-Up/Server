@@ -23,9 +23,9 @@ public class SubComment {
 
     private String content;
 
-    private Integer comment_id;
+    private Integer commentId;
 
-    private Integer user_id;
+    private Integer userId;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 }
