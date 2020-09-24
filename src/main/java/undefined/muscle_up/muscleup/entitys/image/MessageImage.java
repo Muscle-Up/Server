@@ -21,4 +21,5 @@ public class MessageImage {
     private Integer userId;
 
     private String imageName;
+
 }

@@ -28,4 +28,5 @@ public class SubComment {
     private Integer userId;
 
     private LocalDateTime createdAt;
+
 }

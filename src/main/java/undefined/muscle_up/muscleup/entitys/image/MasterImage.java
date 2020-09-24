@@ -21,4 +21,5 @@ public class MasterImage {
     private Integer userId;
 
     private String imageName;
+
 }

@@ -21,4 +21,5 @@ public class QnaImage {
     private Integer boardId;
 
     private String imageName;
+
 }

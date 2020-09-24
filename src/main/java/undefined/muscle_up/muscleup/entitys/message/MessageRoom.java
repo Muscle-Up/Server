@@ -21,4 +21,5 @@ public class MessageRoom {
     private String roomSeq;
 
     private Integer userId;
+
 }

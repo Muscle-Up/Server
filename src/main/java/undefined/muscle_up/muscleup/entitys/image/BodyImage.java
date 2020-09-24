@@ -21,4 +21,5 @@ public class BodyImage {
     private Integer bodyId;
 
     private String imageName;
+
 }
