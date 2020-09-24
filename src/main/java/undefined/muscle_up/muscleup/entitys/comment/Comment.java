@@ -27,4 +27,5 @@ public class Comment {
     private Integer boardId;
 
     private Integer userId;
+
 }
