@@ -32,6 +32,14 @@ public class User {
 
     private Integer weight;
 
+    private String introduction;
+
     private UserType type;
+
+    public User updateType(UserType userType) {
+        this.type = userType;
+
+        return this;
+    }
 
 }
