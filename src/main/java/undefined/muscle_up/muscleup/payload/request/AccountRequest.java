@@ -19,7 +19,6 @@ public class AccountRequest {
     private String email;
 
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
     private String password;
 
     public UsernamePasswordAuthenticationToken getAuthToken(int id) {
