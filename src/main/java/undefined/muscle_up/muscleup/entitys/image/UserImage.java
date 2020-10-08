@@ -2,10 +2,7 @@ package undefined.muscle_up.muscleup.entitys.image;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Builder
@@ -18,6 +15,7 @@ public class UserImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(unique = true)
     private Integer userId;
 
     private String imageName;
