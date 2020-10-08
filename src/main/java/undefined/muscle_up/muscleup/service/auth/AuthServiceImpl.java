@@ -38,11 +38,6 @@ public class AuthServiceImpl implements AuthService {
                 .filter(user -> passwordEncoder.matches(accountRequest.getPassword(), user.getPassword()))
                 .map(User::getId)
                 .map(id -> {
-                    try {
-                        authenticationManager.authenticate(accountRequest.getAuthToken(id));
-                    } catch (RuntimeException e) {
-                        throw new RuntimeException(e.getLocalizedMessage());
-                    }
                     String accessToken = jwtProvider.generateAccessToken(id);
                     String refreshToken = jwtProvider.generateRefreshToken(id);
                     refreshTokenService.save(new RefreshToken(id, refreshToken, refreshExp));
