@@ -15,7 +15,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer id;
+    private Integer id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -24,6 +24,7 @@ public class User {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private Integer age;
@@ -32,6 +33,7 @@ public class User {
 
     private Integer weight;
 
+    @Enumerated(EnumType.STRING)
     private UserType type;
 
 }
