@@ -1,9 +1,13 @@
 package undefined.muscle_up.muscleup.payload.request;
 
+import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.entitys.user.enums.Sex;
 
+
 @Getter
+@Builder
 public class SignUpRequest {
 
     private String name;
@@ -16,8 +20,10 @@ public class SignUpRequest {
 
     private String password;
 
-    private Integer height;
+    private Integer heigth;
 
-    private Integer weight;
+    private Integer weigth;
+
+    private MultipartFile image;
 
 }
