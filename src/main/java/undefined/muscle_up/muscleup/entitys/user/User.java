@@ -24,6 +24,7 @@ public class User {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private Integer age;
@@ -34,6 +35,7 @@ public class User {
 
     private String introduction;
 
+    @Enumerated(EnumType.STRING)
     private UserType type;
 
     public User updateType(UserType userType) {
