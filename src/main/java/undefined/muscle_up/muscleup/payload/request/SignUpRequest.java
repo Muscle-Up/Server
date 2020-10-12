@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.entitys.user.enums.Sex;
 
-
 @Getter
 @Builder
 public class SignUpRequest {
