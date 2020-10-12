@@ -24,4 +24,5 @@ public class AccountRequest {
     public UsernamePasswordAuthenticationToken getAuthToken(int id) {
         return new UsernamePasswordAuthenticationToken(id, password);
     }
+
 }
