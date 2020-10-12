@@ -19,13 +19,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    @Value("${image.file.path}")
+    private String imagePath;
+
     private final UserRepository userRepository;
     private final UserImageRepository userImageRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${image.file.path}")
-    private String imagePath;
 
     @SneakyThrows
     @Override
@@ -56,7 +56,9 @@ public class UserServiceImpl implements UserService {
                     .imageName(fileName)
                     .build()
         );
+
         File file = new File(imagePath, userImage.getImageName());
         signUpRequest.getImage().transferTo(file);
     }
+
 }
