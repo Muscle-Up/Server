@@ -18,4 +18,5 @@ public class AuthDetailsService implements UserDetailsService {
                 .map(AuthDetails::new)
                 .orElseThrow(RuntimeException::new);
     }
+
 }
