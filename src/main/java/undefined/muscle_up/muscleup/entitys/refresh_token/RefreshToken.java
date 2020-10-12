@@ -25,4 +25,5 @@ public class RefreshToken {
         this.ttl = ttl;
         return this;
     }
+
 }
