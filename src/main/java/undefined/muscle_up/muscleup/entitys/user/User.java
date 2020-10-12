@@ -6,34 +6,34 @@ import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 
 import javax.persistence.*;
 
-@Getter
-@Builder
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+    @Getter
+    @Builder
+    @Entity
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+        @Column(unique = true, nullable = false)
+        private String email;
 
-    private String password;
+        private String password;
 
-    private String name;
+        private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Sex sex;
+        @Enumerated(EnumType.STRING)
+        private Sex sex;
 
-    private Integer age;
+        private Integer age;
 
-    private Integer height;
+        private Integer height;
 
-    private Integer weight;
+        private Integer weight;
 
-    @Enumerated(EnumType.STRING)
-    private UserType type;
+        @Enumerated(EnumType.STRING)
+        private UserType type;
 
-}
+    }
