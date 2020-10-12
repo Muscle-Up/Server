@@ -25,7 +25,7 @@ public class QnaBoard {
 
     private Integer view;
 
-    private Integer like;
+    private Integer likeCount;
 
     private LocalDateTime createdAt;
 
