@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.payload.response.PageResponse;
 import undefined.muscle_up.muscleup.service.expert.ExpertService;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @RestController
@@ -24,16 +25,15 @@ public class ExpertController {
     }
 
     @PostMapping
-    public void registration(@RequestParam @NotBlank String email,
-                             @RequestParam String introduction,
+    public void registration(@RequestParam String introduction,
                              MultipartFile image) {
 
-        expertService.registration(email, introduction, image);
+        expertService.registration(introduction, image);
     }
 
     @DeleteMapping
-    public void deleteExpert(@RequestBody String email) {
-        expertService.deleteExpert(email);
+    public void deleteExpert() {
+        expertService.deleteExpert();
     }
 
     @GetMapping(
@@ -48,4 +48,5 @@ public class ExpertController {
     public void updateImage(@RequestParam MultipartFile image) {
         expertService.updateImage(image);
     }
+
 }
