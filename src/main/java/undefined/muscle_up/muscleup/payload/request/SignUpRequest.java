@@ -19,9 +19,9 @@ public class SignUpRequest {
 
     private String password;
 
-    private Integer heigth;
+    private Integer height;
 
-    private Integer weigth;
+    private Integer weight;
 
     private MultipartFile image;
 

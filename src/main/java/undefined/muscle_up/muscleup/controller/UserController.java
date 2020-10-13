@@ -26,8 +26,8 @@ public class UserController {
                        @RequestParam Sex sex,
                        @RequestParam @Email String email,
                        @RequestParam String password,
-                       @RequestParam Integer heigth,
-                       @RequestParam Integer weigth,
+                       @RequestParam Integer height,
+                       @RequestParam Integer weight,
                        @RequestParam MultipartFile image){
 
         userService.signUp(
@@ -37,8 +37,8 @@ public class UserController {
                         .sex(sex)
                         .email(email)
                         .password(password)
-                        .heigth(heigth)
-                        .weigth(weigth)
+                        .height(height)
+                        .weight(weight)
                         .image(image)
                         .build()
         );
