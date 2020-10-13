@@ -7,8 +7,8 @@ import undefined.muscle_up.muscleup.payload.response.PageResponse;
 public interface ExpertService {
 
     PageResponse expertList(Pageable page);
-    void registration(String email, String introduction, MultipartFile image);
-    void deleteExpert(String email);
+    void registration(String introduction, MultipartFile image);
+    void deleteExpert();
     byte[] getImage(String imageName);
     void updateImage(MultipartFile image);
 }
