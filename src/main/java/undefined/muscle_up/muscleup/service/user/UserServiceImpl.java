@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
                 .age(signUpRequest.getAge())
                 .sex(signUpRequest.getSex())
                 .type(UserType.USER)
-                .heigth(signUpRequest.getHeigth())
-                .weigth(signUpRequest.getWeigth())
+                .height(signUpRequest.getHeigth())
+                .weight(signUpRequest.getWeigth())
                 .build()
         );
 
