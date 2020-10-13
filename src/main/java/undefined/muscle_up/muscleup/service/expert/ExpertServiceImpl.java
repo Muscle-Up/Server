@@ -15,12 +15,15 @@ import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.payload.response.ExpertResponse;
 import undefined.muscle_up.muscleup.payload.response.PageResponse;
+import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,6 +32,8 @@ public class ExpertServiceImpl implements ExpertService{
 
     private final UserRepository userRepository;
     private final MasterImageRepository masterImageRepository;
+
+    private final AuthenticationFacade authenticationFacade;
 
     @Value("${image.upload.dir}")
     private String imageDirPath;
@@ -45,6 +50,7 @@ public class ExpertServiceImpl implements ExpertService{
         for (User user : users) {
             expertResponses.add(
                     ExpertResponse.builder()
+                        .uuid(user.getId())
                         .introduction(user.getIntroduction())
                         .name(user.getName())
                         .build()
@@ -60,16 +66,14 @@ public class ExpertServiceImpl implements ExpertService{
 
     @SneakyThrows
     @Override
-    public void registration(String email, String introduction, MultipartFile image) {
-        User user = userRepository.findAllByEmail(email).orElseThrow(RuntimeException::new);
+    public void registration(String introduction, MultipartFile image) {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        User user = userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
 
-        userRepository.save(user.updateType(UserType.EXPERT));
+        if (user.getType().equals(UserType.EXPERT)) throw new RuntimeException();
 
-        userRepository.save(
-                User.builder()
-                    .introduction(introduction)
-                    .build()
-        );
+        userRepository.save(user.update(introduction, UserType.EXPERT));
 
         String fileName = UUID.randomUUID().toString();
 
@@ -81,17 +85,21 @@ public class ExpertServiceImpl implements ExpertService{
         );
 
         image.transferTo(new File(imageDirPath, fileName));
-        
     }
 
     @Override
-    public void deleteExpert(String email) {
-        User user = userRepository.findAllByEmail(email).orElseThrow(RuntimeException::new);
+    @Transactional
+    public void deleteExpert() {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        User user = userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
 
-        userRepository.save(user.updateType(UserType.USER));
+        userRepository.save(user.update("",UserType.USER));
 
-        masterImageRepository.deleteByUserId(user.getId()).orElseThrow(RuntimeException::new);
+       MasterImage masterImage = masterImageRepository.deleteByUserId(user.getId())
+               .orElseThrow(RuntimeException::new);
 
+       new File(imageDirPath, masterImage.getImageName()).delete();
     }
 
     @SneakyThrows
@@ -104,21 +112,26 @@ public class ExpertServiceImpl implements ExpertService{
         InputStream inputStream = new FileInputStream(file);
 
         return IOUtils.toByteArray(inputStream);
-
     }
 
     @SneakyThrows
     @Override
     public void updateImage(MultipartFile image) {
-        User user = userRepository.findById(1).orElseThrow(RuntimeException::new);
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        User user = userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
 
         String fileName = UUID.randomUUID().toString();
 
-        MasterImage masterImage = masterImageRepository.findByUserId(user.getId()).orElseThrow(RuntimeException::new);
+        MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
+                .orElseThrow(RuntimeException::new);
+
+        File file = new File(imageDirPath, masterImage.getImageName());
+        if (file.exists()) file.delete();
+
         masterImageRepository.save(masterImage.update(fileName));
 
         image.transferTo(new File(imageDirPath, fileName));
-
     }
 
 }
