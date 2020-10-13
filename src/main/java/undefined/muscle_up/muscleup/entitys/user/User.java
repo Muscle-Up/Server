@@ -38,7 +38,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType type;
 
-    public User updateType(UserType userType) {
+    public User update(String introduction, UserType userType) {
+        this.introduction = introduction;
         this.type = userType;
 
         return this;
