@@ -7,6 +7,8 @@ import lombok.Getter;
 @Builder
 public class ExpertResponse {
 
+    private Integer uuid;
+
     private String introduction;
 
     private String name;
