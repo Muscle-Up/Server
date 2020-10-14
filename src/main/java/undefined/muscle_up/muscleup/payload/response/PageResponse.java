@@ -8,10 +8,7 @@ import java.util.List;
 @Getter
 @Builder
 public class PageResponse {
-
     private Integer totalElements;
-
     private Integer totalPages;
-
     private List<ExpertResponse> expertListResponse;
 }
