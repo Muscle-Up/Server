@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface MasterImageRepository extends CrudRepository<MasterImage, Integer> {
-
     Optional<MasterImage> findByImageName(String imageName);
     Optional<MasterImage> deleteByUserId(Integer userId);
     Optional<MasterImage> findByUserId(Integer userId);
