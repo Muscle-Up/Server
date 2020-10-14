@@ -8,9 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.payload.response.PageResponse;
 import undefined.muscle_up.muscleup.service.expert.ExpertService;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-
 @RestController
 @RequestMapping("/expert")
 @RequiredArgsConstructor
@@ -20,14 +17,12 @@ public class ExpertController {
 
     @GetMapping
     public PageResponse expertList(Pageable page) {
-
         return expertService.expertList(page);
     }
 
     @PostMapping
     public void registration(@RequestParam String introduction,
                              MultipartFile image) {
-
         expertService.registration(introduction, image);
     }
 
