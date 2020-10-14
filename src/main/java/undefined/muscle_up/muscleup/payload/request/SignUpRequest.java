@@ -13,7 +13,7 @@ public class SignUpRequest {
     private Sex sex;
     private String email;
     private String password;
-    private Integer heigth;
-    private Integer weigth;
+    private Integer height;
+    private Integer weight;
     private MultipartFile image;
 }
