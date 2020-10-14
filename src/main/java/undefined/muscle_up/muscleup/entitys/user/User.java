@@ -33,7 +33,16 @@ public class User {
 
     private Integer weight;
 
+    private String introduction;
+
     @Enumerated(EnumType.STRING)
     private UserType type;
+
+    public User update(String introduction, UserType userType) {
+        this.introduction = introduction;
+        this.type = userType;
+
+        return this;
+    }
 
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Value("${image.file.path}")
+    @Value("${image.upload.dir}")
     private String imagePath;
 
     private final UserRepository userRepository;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void signUp(SignUpRequest signUpRequest) {
 
-        userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
+       userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
        throw new RuntimeException();
         });
 

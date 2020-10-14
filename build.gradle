@@ -32,6 +32,7 @@ dependencies {
     implementation 'it.ozimov:embedded-redis:0.7.3'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+    implementation 'commons-io:commons-io:2.6'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'

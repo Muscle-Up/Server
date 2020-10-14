@@ -20,4 +20,10 @@ public class MasterImage {
 
     private String imageName;
 
+    public MasterImage update(String imageName) {
+        this.imageName = imageName;
+
+        return this;
+    }
+
 }
