@@ -28,4 +28,9 @@ public class Comment {
 
     private Integer userId;
 
+    public Comment updateContent(String content) {
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        return this;
+    }
 }
