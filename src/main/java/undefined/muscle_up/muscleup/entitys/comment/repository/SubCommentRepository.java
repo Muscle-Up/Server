@@ -8,7 +8,9 @@ import java.util.List;
 
 @Repository
 public interface SubCommentRepository extends CrudRepository<SubComment, Integer> {
-    List<SubComment> findAllByCommentIdOrderByCommentIdAsc(Integer commendId);
+    List<SubComment> findAllByCommentIdOrderByIdAsc(Integer subCommentId);
 
-    void deleteById(Integer commentId);
+    void deleteAllByCommentId(Integer commentId);
+
+    void deleteById(Integer subCommentId);
 }
