@@ -37,10 +37,10 @@ public class CommentController {
         commentService.changeComment(commentId, content);
     }
 
-    @PutMapping("/sub/{commentId}")
-    public void changeSubComment(@PathVariable Integer commentId,
+    @PutMapping("/sub/{subCommentId}")
+    public void changeSubComment(@PathVariable Integer subCommentId,
                                  @RequestParam String content) {
-        commentService.changeSubComment(commentId, content);
+        commentService.changeSubComment(subCommentId, content);
     }
 
     @DeleteMapping("/{commentId}")
@@ -48,8 +48,8 @@ public class CommentController {
         commentService.deleteComment(commentId);
     }
 
-    @DeleteMapping("/sub/{commentId}")
-    public void deleteSubComment(@PathVariable Integer commentId) {
-        commentService.deleteSubComment(commentId);
+    @DeleteMapping("/sub/{subCommentId}")
+    public void deleteSubComment(@PathVariable Integer subCommentId) {
+        commentService.deleteSubComment(subCommentId);
     }
 }
