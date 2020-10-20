@@ -21,5 +21,4 @@ public class QnaBoardView {
     private Integer boardId;
 
     private Integer userId;
-
 }
