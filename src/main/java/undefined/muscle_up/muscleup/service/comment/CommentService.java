@@ -10,7 +10,7 @@ public interface CommentService {
     void postSubComment(Integer commentId, String content);
     List<QnaBoardCommentResponse> getComment(Integer boardId);
     void changeComment(Integer commentId, String content);
-    void changeSubComment(Integer commentId, String content);
+    void changeSubComment(Integer subCommentId, String content);
     void deleteComment(Integer commentId);
-    void deleteSubComment(Integer commentId);
+    void deleteSubComment(Integer subCommentId);
 }

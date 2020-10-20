@@ -14,6 +14,7 @@ import undefined.muscle_up.muscleup.payload.response.QnaBoardCommentResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardSubCommentResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
         for (Comment comment : comments) {
             List<QnaBoardSubCommentResponse> subComments = new ArrayList<>();
 
-            for (SubComment subComment : subCommentRepository.findAllByCommentIdOrderByCommentIdAsc(comment.getId())) {
+            for (SubComment subComment : subCommentRepository.findAllByCommentIdOrderByIdAsc(comment.getId())) {
                 User subCommentWriter = userRepository.findById(subComment.getUserId())
                         .orElseThrow(RuntimeException::new);
 
@@ -95,6 +96,7 @@ public class CommentServiceImpl implements CommentService {
                             .content(comment.getContent())
                             .writer(user.getName())
                             .createdAt(comment.getCreatedAt())
+                            .subComment(subComments)
                             .isMine(user.getId().equals(comment.getUserId()))
                             .build()
             );
@@ -116,11 +118,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void changeSubComment(Integer commentId, String content) {
+    public void changeSubComment(Integer subCommentId, String content) {
         User user = userRepository.findById(authenticationFacade.getReceiptCode())
                 .orElseThrow(RuntimeException::new);
 
-        SubComment subComment = subCommentRepository.findById(commentId)
+        SubComment subComment = subCommentRepository.findById(subCommentId)
                 .orElseThrow(RuntimeException::new);
 
         if(!user.getId().equals(subComment.getUserId())) throw new RuntimeException();
@@ -129,6 +131,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Integer commentId) {
         User user = userRepository.findById(authenticationFacade.getReceiptCode())
                 .orElseThrow(RuntimeException::new);
@@ -138,19 +141,20 @@ public class CommentServiceImpl implements CommentService {
 
         if(!user.getId().equals(comment.getUserId())) throw new RuntimeException();
 
+        subCommentRepository.deleteAllByCommentId(commentId);
         commentRepository.deleteById(commentId);
     }
 
     @Override
-    public void deleteSubComment(Integer commentId) {
+    public void deleteSubComment(Integer subCommentId) {
         User user = userRepository.findById(authenticationFacade.getReceiptCode())
                 .orElseThrow(RuntimeException::new);
 
-        SubComment subComment = subCommentRepository.findById(commentId)
+        SubComment subComment = subCommentRepository.findById(subCommentId)
                 .orElseThrow(RuntimeException::new);
 
         if(!user.getId().equals(subComment.getUserId())) throw new RuntimeException();
 
-        subCommentRepository.deleteById(commentId);
+        subCommentRepository.deleteById(subCommentId);
     }
 }
