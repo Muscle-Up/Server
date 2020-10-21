@@ -15,7 +15,6 @@ public class QnaImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
     private Integer boardId;
 
     private String imageName;
