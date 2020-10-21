@@ -3,6 +3,8 @@ package undefined.muscle_up.muscleup.service.qnaboard;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.entitys.image.QnaImage;
@@ -17,6 +19,7 @@ import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardContentResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardListResponse;
+import undefined.muscle_up.muscleup.payload.response.QnaBoardResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import javax.transaction.Transactional;
@@ -75,10 +78,11 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     }
 
     @Override
-    public List<QnaBoardListResponse> getBoardList() {
+    public QnaBoardResponse getBoardList(Pageable pageable) {
+        Page<QnaBoard> qnaBoards = qnaBoardRepository.findAll(pageable);
         List<QnaBoardListResponse> listResponses = new ArrayList<>();
 
-        for (QnaBoard qnaBoard : qnaBoardRepository.findAllByOrderByCreatedAtDesc()) {
+        for (QnaBoard qnaBoard : qnaBoards) {
             User user = userRepository.findById(qnaBoard.getUserId())
                     .orElseThrow(RuntimeException::new);
 
@@ -91,7 +95,11 @@ public class QnaBoardServiceImpl implements QnaBoardService {
                             .build()
             );
         }
-        return listResponses;
+        return QnaBoardResponse.builder()
+                .totalElements((int) qnaBoards.getTotalElements())
+                .totalPage(qnaBoards.getTotalPages())
+                .qnaBoardListResponse(listResponses)
+                .build();
     }
 
     @Override
@@ -178,18 +186,16 @@ public class QnaBoardServiceImpl implements QnaBoardService {
 
         qnaImageRepository.deleteByBoardId(boardId);
 
-        if(images.length != 0) {
-            for (MultipartFile file : images) {
-                String fileName = UUID.randomUUID().toString();
+        for (MultipartFile file : images) {
+            String fileName = UUID.randomUUID().toString();
 
-                qnaImageRepository.save(
-                        QnaImage.builder()
-                                .boardId(boardId)
-                                .imageName(fileName)
-                                .build()
-                );
-                file.transferTo(new File(imageDirPath, fileName));
-            }
+            qnaImageRepository.save(
+                    QnaImage.builder()
+                            .boardId(boardId)
+                            .imageName(fileName)
+                            .build()
+            );
+            file.transferTo(new File(imageDirPath, fileName));
         }
     }
 
