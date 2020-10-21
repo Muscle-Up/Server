@@ -29,4 +29,9 @@ public class SubComment {
 
     private LocalDateTime createdAt;
 
+    public SubComment updateSubContent(String content) {
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        return this;
+    }
 }
