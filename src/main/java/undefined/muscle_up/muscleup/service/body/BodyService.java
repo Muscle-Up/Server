@@ -1,0 +1,18 @@
+package undefined.muscle_up.muscleup.service.body;
+
+import org.springframework.web.multipart.MultipartFile;
+import undefined.muscle_up.muscleup.entitys.body.repository.BodyRepository;
+import undefined.muscle_up.muscleup.payload.response.BodyResponse;
+
+import java.util.List;
+
+public interface BodyService {
+    void bodyCreate(String title, String content, MultipartFile image);
+    void bodyUpdate(String title, String content, Integer id);
+    void bodyDelete(Integer bodyId);
+    List<BodyResponse> getBodyList();
+    void bodyImageUpdate(MultipartFile image, Integer bodyId);
+    void bodyImageDelete(Integer bodyId);
+    byte[] getBodyImage(String imageName);
+
+}
