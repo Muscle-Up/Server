@@ -2,10 +2,7 @@ package undefined.muscle_up.muscleup.entitys.body;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Getter
@@ -19,12 +16,22 @@ public class Body {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column
     private Integer userId;
 
+    @Column
     private String title;
 
+    @Column
     private String content;
 
+    @Column
     private LocalDate createdAt;
 
+    public Body update(String title, String content) {
+        this.title = title;
+        this.content = content;
+
+        return this;
+    }
 }
