@@ -38,9 +38,9 @@ public class BodyController {
         bodyService.bodyImageUpdate(image, bodyId);
     }
 
-    @DeleteMapping("{boardId}")
-    public void bodyBoardDelete(@PathVariable Integer boardId) {
-        bodyService.bodyDelete(boardId);
+    @DeleteMapping("{bodyId}")
+    public void bodyBoardDelete(@PathVariable Integer bodyId) {
+        bodyService.bodyDelete(bodyId);
     }
 
     @DeleteMapping("/image/{bodyId}")
