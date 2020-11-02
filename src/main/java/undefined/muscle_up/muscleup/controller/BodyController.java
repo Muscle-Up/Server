@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import undefined.muscle_up.muscleup.payload.request.BodyCreateRequest;
+import undefined.muscle_up.muscleup.payload.request.BodyUpdateRequest;
 import undefined.muscle_up.muscleup.payload.response.BodyResponse;
 import undefined.muscle_up.muscleup.service.body.BodyService;
 
@@ -26,10 +26,10 @@ public class BodyController {
     }
 
     @PutMapping("/{bodyId}")
-    public void bodyBoardUpdate(@RequestBody BodyCreateRequest bodyCreateRequest,
+    public void bodyBoardUpdate(@RequestBody BodyUpdateRequest bodyUpdateRequest,
                                 @PathVariable Integer bodyId) {
 
-        bodyService.bodyUpdate(bodyCreateRequest, bodyId);
+        bodyService.bodyUpdate(bodyUpdateRequest, bodyId);
     }
 
     @PutMapping("/image/{bodyId}")
