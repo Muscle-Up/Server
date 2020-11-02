@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface BodyImageRepository extends CrudRepository<BodyImage, Integer> {
     Optional<BodyImage> findByBodyId(Integer bodyId);
+    void deleteById(Integer id);
 }
