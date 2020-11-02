@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -16,16 +17,12 @@ public class Body {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
     private Integer userId;
 
-    @Column
     private String title;
 
-    @Column
     private String content;
 
-    @Column
     private LocalDate createdAt;
 
     public Body update(String title, String content) {
