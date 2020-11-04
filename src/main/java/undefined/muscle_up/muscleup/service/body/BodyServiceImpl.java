@@ -11,6 +11,7 @@ import undefined.muscle_up.muscleup.entitys.body.repository.BodyRepository;
 import undefined.muscle_up.muscleup.entitys.image.BodyImage;
 import undefined.muscle_up.muscleup.entitys.image.repository.BodyImageRepository;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.payload.request.BodyUpdateRequest;
 import undefined.muscle_up.muscleup.payload.response.BodyResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
@@ -22,18 +23,22 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
 public class BodyServiceImpl implements BodyService{
-
     private final BodyRepository bodyRepository;
-
     private final BodyImageRepository bodyImageRepository;
+    private final UserRepository userRepository;
 
     private final AuthenticationFacade authenticationFacade;
 
-    private final UserRepository userRepository;
+    private <T> void setIfNotNull(Consumer<T> setter, T value) {
+        if(value != null) {
+            setter.accept(value);
+        }
+    }
 
     @Value("${body.image.upload.dir}")
     private String bodyImageDirPath;
@@ -42,7 +47,6 @@ public class BodyServiceImpl implements BodyService{
     @Override
     public void bodyCreate(String title, String content, MultipartFile image) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
-
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -70,7 +74,6 @@ public class BodyServiceImpl implements BodyService{
     @Override
     public List<BodyResponse> getBodyList() {
         Integer receiptCode = authenticationFacade.getReceiptCode();
-
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -94,6 +97,10 @@ public class BodyServiceImpl implements BodyService{
     @SneakyThrows
     @Override
     public byte[] getBodyImage(String imageName) {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
+
         File file = new File(bodyImageDirPath, imageName);
         if(!file.exists()) throw new RuntimeException();
 
@@ -108,19 +115,7 @@ public class BodyServiceImpl implements BodyService{
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        bodyRepository.deleteById(bodyId);
-    }
-
-    @SneakyThrows
-    @Override
-    @Transactional
-    public void bodyImageDelete(Integer bodyId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
-
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
-
-        bodyRepository.findByUserId(receiptCode)
+        Body body = bodyRepository.findById(bodyId)
                 .orElseThrow(RuntimeException::new);
 
         BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
@@ -128,27 +123,46 @@ public class BodyServiceImpl implements BodyService{
 
         new File(bodyImageDirPath, bodyImage.getImageName()).delete();
 
-        bodyImageRepository.save(bodyImage.update(""));
+        bodyImageRepository.deleteById(bodyImage.getId());
+
+        bodyRepository.deleteById(body.getId());
     }
 
+    @SneakyThrows
     @Override
-    public void bodyUpdate(String title, String content, Integer id) {
+    @Transactional
+    public void bodyImageDelete(Integer bodyId) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
-
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        Body body = bodyRepository.findById(id)
+        BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
                 .orElseThrow(RuntimeException::new);
 
-        bodyRepository.save(body.update(title, content));
+        new File(bodyImageDirPath, bodyImage.getImageName()).delete();
+
+        bodyImageRepository.deleteById(bodyImage.getId());
+    }
+
+    @Override
+    public void bodyUpdate(BodyUpdateRequest bodyUpdateRequest, Integer bodyId) {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
+
+        Body body = bodyRepository.findById(bodyId)
+                .orElseThrow(RuntimeException::new);
+
+        setIfNotNull(body::setTitle, bodyUpdateRequest.getTitle());
+        setIfNotNull(body::setContent, bodyUpdateRequest.getContent());
+
+        bodyRepository.save(body);
     }
 
     @SneakyThrows
     @Override
     public void bodyImageUpdate(MultipartFile image, Integer bodyId) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
-
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
