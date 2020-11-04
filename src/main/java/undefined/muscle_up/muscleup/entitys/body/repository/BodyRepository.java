@@ -14,4 +14,3 @@ public interface BodyRepository extends CrudRepository<Body, Integer> {
     void deleteById(Integer id);
     List<Body> findAllByUserId(Integer userID);
 }
-

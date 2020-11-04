@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Body {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,11 +23,4 @@ public class Body {
     private String content;
 
     private LocalDate createdAt;
-
-    public Body update(String title, String content) {
-        this.title = title;
-        this.content = content;
-
-        return this;
-    }
 }
