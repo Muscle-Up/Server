@@ -6,6 +6,7 @@ import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 
 import javax.persistence.*;
 
+@Setter
 @Getter
 @Builder
 @Entity
