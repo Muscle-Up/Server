@@ -77,10 +77,10 @@ public class BodyServiceImpl implements BodyService{
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        List<Body> bodies = bodyRepository.findAllByUserId(receiptCode);
+        List<Body> bodyList = bodyRepository.findAllByUserId(receiptCode);
         List<BodyResponse> responses = new ArrayList<>();
 
-        for(Body body : bodies) {
+        for(Body body : bodyList) {
             BodyResponse bodyResponse = BodyResponse.builder()
                     .bodyId(body.getId())
                     .title(body.getTitle())
