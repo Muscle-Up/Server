@@ -9,8 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface BodyRepository extends CrudRepository<Body, Integer> {
-    Optional<Body> findByUserId(Integer userId);
-    Optional<Body> findById(Integer id);
-    void deleteById(Integer id);
     List<Body> findAllByUserId(Integer userID);
 }
