@@ -17,6 +17,19 @@ public class BodyController {
 
     private final BodyService bodyService;
 
+    @GetMapping
+    public List<BodyResponse> bodyBoardList() {
+        return bodyService.getBodyList();
+    }
+
+    @GetMapping(
+            value = "/image/{imageName}",
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE}
+    )
+    public byte[] getBodyImage(@PathVariable String imageName) {
+        return bodyService.getBodyImage(imageName);
+    }
+
     @PostMapping
     public void bodyBoardCreate(@RequestParam String title,
                                 @RequestParam String content,
@@ -48,16 +61,6 @@ public class BodyController {
         bodyService.bodyImageDelete(bodyId);
     }
 
-    @GetMapping
-    public List<BodyResponse> bodyBoardList() {
-        return bodyService.getBodyList();
-    }
 
-    @GetMapping(
-            value = "/image/{imageName}",
-            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE}
-    )
-    public byte[] getBodyImage(@PathVariable String imageName) {
-        return bodyService.getBodyImage(imageName);
-    }
+
 }
