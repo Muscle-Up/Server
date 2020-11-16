@@ -67,14 +67,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePw(ChangePwRequest changePwRequest) {
+    public void changePw(String password) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        setIfNotNull(user::setPassword, passwordEncoder.encode(changePwRequest.getPassword()));
-
-        userRepository.save(user);
+        userRepository.save(user.updatePw(password));
     }
 
     @SneakyThrows

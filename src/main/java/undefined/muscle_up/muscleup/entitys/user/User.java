@@ -45,6 +45,12 @@ public class User {
         return this;
     }
 
+    public User updatePw(String password){
+        this.password = password;
+
+        return this;
+    }
+
     public void setPassword(String password){
         this.password = password;
     }

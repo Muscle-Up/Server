@@ -62,13 +62,13 @@ public class UserController {
     }
 
     @PutMapping
-    public void changePw(@RequestBody ChangePwRequest changePwRequest) {
-        userService.changePw(changePwRequest);
+    public void changePw(@RequestBody String password) {
+        userService.changePw(password);
     }
 
     @GetMapping
     public MainPageResponse mainPage() {
         return userService.mainPage();
-
     }
+
 }
