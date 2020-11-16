@@ -51,10 +51,6 @@ public class User {
         return this;
     }
 
-    public void setPassword(String password){
-        this.password = password;
-    }
-
     public void setAge(Integer age){
         this.age = age;
     }
