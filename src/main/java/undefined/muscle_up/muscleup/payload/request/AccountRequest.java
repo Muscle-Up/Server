@@ -19,9 +19,5 @@ public class AccountRequest {
 
     @NotEmpty
     private String password;
-
-    public UsernamePasswordAuthenticationToken getAuthToken(int id) {
-        return new UsernamePasswordAuthenticationToken(id, password);
-    }
-
+    
 }
