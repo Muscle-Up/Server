@@ -67,7 +67,8 @@ public class UserController {
     }
 
     @GetMapping
-    public MainPageResponse mainPage(){
+    public MainPageResponse mainPage() {
         return userService.mainPage();
+
     }
 }
