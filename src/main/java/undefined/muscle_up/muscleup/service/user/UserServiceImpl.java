@@ -17,6 +17,7 @@ import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        userRepository.save(user.updatePw(password));
+        userRepository.save(user.updatePw(passwordEncoder.encode(password)));
     }
 
     @SneakyThrows
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
                     .orElseThrow(RuntimeException::new);
 
             File file = new File(imagePath, userImage.getImageName());
-            if (file.exists()) file.delete();
+            Files.deleteIfExists(file.toPath());
 
             userImageRepository.save(userImage.update(fileName));
 
