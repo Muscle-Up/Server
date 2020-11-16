@@ -24,14 +24,13 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Value("${image.upload.dir}")
-    private String imagePath;
-
     private final UserRepository userRepository;
     private final UserImageRepository userImageRepository;
     private final AuthenticationFacade authenticationFacade;
-
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${image.upload.dir}")
+    private String imagePath;
 
     @SneakyThrows
     @Override
