@@ -115,7 +115,7 @@ public class BodyServiceImpl implements BodyService{
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        Body body = bodyRepository.findById(bodyId)
+        bodyRepository.findById(bodyId)
                 .orElseThrow(RuntimeException::new);
 
         BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
@@ -125,7 +125,7 @@ public class BodyServiceImpl implements BodyService{
 
         bodyImageRepository.deleteById(bodyImage.getId());
 
-        bodyRepository.deleteById(body.getId());
+        bodyRepository.deleteById(bodyId);
     }
 
     @SneakyThrows
