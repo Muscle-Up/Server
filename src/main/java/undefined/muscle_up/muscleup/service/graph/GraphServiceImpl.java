@@ -3,6 +3,7 @@ package undefined.muscle_up.muscleup.service.graph;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import undefined.muscle_up.muscleup.entitys.graph.Graph;
+import undefined.muscle_up.muscleup.entitys.graph.enums.GraphType;
 import undefined.muscle_up.muscleup.entitys.graph.repository.GraphRepository;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.payload.request.GraphRequest;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+
 @Service
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService{
@@ -22,11 +24,40 @@ public class GraphServiceImpl implements GraphService{
     private final AuthenticationFacade authenticationFacade;
 
     private <T> void setIfNotNull(Consumer<T> setter, T value) {
-        if(value.equals(0.0)) {
-            System.out.println(value);
-            return;
+        if(!value.equals(0.0)) {
+            setter.accept(value);
         }
-        setter.accept(value);
+    }
+
+    private double getCheckAndValue(GraphType type, Graph graph) {
+        if(type.equals(GraphType.muscleMass))
+            return graph.getMuscleMass();
+        else if(type.equals(GraphType.bodyFatMass))
+            return graph.getBodyFatMass();
+        else if(type.equals(GraphType.weight))
+            return graph.getWeight();
+        else
+            throw new RuntimeException();
+    }
+
+    @Override
+    public List<GraphResponse> getGraph(GraphType graphType) {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
+
+        List<Graph> graphs = graphRepository.findAllByUserId(receiptCode);
+        List<GraphResponse> responses = new ArrayList<>();
+
+        for(Graph graph : graphs) {
+            double value = getCheckAndValue(graphType, graph);
+            GraphResponse graphResponse = GraphResponse.builder()
+                    .id(graph.getId())
+                    .value(value)
+                    .build();
+            responses.add(graphResponse);
+        }
+        return responses;
     }
 
     @Override
@@ -37,38 +68,28 @@ public class GraphServiceImpl implements GraphService{
 
         graphRepository.save(
                 Graph.builder()
-                        .tall(graphCreateRequest.getTall())
-                        .weight(graphCreateRequest.getWeight())
-                        .muscular_strength(graphCreateRequest.getMuscular_strength())
-                        .fat_percentage(graphCreateRequest.getFat_percentage())
-                        .userId(receiptCode)
-                        .build()
+                .userId(receiptCode)
+                .weight(graphCreateRequest.getWeight())
+                .bodyFatMass(graphCreateRequest.getBodyFatMass())
+                .muscleMass(graphCreateRequest.getMuscleMass())
+                .build()
         );
     }
 
     @Override
-    public List<GraphResponse> getGraph() {
+    public void updateGraph(GraphRequest graphUpdateRequest, Integer graphId) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        List<Graph> graphs = graphRepository.findAllByUserId(receiptCode);
-        List<GraphResponse> responses = new ArrayList<>();
+        Graph graph = graphRepository.findById(graphId)
+                .orElseThrow(RuntimeException::new);
 
-        for(Graph graph : graphs) {
-            GraphResponse graphResponse =
-                    GraphResponse.builder()
-                            .id(graph.getId())
-                            .tall(graph.getTall())
-                            .weight(graph.getWeight())
-                            .fat_percentage(graph.getFat_percentage())
-                            .muscular_strength(graph.getMuscular_strength())
-                            .build();
+        setIfNotNull(graph::setMuscleMass, graphUpdateRequest.getMuscleMass());
+        setIfNotNull(graph::setBodyFatMass, graphUpdateRequest.getBodyFatMass());
+        setIfNotNull(graph::setWeight, graphUpdateRequest.getWeight());
 
-            responses.add(graphResponse);
-        }
-
-        return responses;
+        graphRepository.save(graph);
     }
 
     @Override
@@ -81,23 +102,6 @@ public class GraphServiceImpl implements GraphService{
                 .orElseThrow(RuntimeException::new);
 
         graphRepository.deleteById(graph.getId());
-    }
-
-    @Override
-    public void updateGraph(GraphRequest graphUpdateRequest, Integer graphId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
-
-        Graph graph = graphRepository.findById(graphId)
-                .orElseThrow(RuntimeException::new);
-
-        setIfNotNull(graph::setTall, graphUpdateRequest.getTall());
-        setIfNotNull(graph::setWeight, graphUpdateRequest.getWeight());
-        setIfNotNull(graph::setMuscular_strength, graphUpdateRequest.getMuscular_strength());
-        setIfNotNull(graph::setFat_percentage, graphUpdateRequest.getFat_percentage());
-
-        graphRepository.save(graph);
     }
 }
 
