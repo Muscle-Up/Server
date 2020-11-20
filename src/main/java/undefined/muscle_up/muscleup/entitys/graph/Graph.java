@@ -3,10 +3,8 @@ package undefined.muscle_up.muscleup.entitys.graph;
 import lombok.*;
 import undefined.muscle_up.muscleup.entitys.graph.enums.GraphType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -21,6 +19,9 @@ public class Graph {
     private Integer id;
 
     private Integer userId;
+
+    @Column(unique = true)
+    private LocalDate createAt;
 
     private double weight;
 
