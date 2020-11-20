@@ -10,6 +10,7 @@ import undefined.muscle_up.muscleup.payload.request.GraphRequest;
 import undefined.muscle_up.muscleup.payload.response.GraphResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -41,6 +42,21 @@ public class GraphServiceImpl implements GraphService{
     }
 
     @Override
+    public boolean checkGraphToday() {
+        Integer receiptCode = authenticationFacade.getReceiptCode();
+        userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
+
+        List<Graph> graphList = graphRepository.findAllByUserId(receiptCode);
+
+        for(Graph graph : graphList) {
+            if(graph.getCreateAt().isEqual(LocalDate.now()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public List<GraphResponse> getGraph(GraphType graphType) {
         Integer receiptCode = authenticationFacade.getReceiptCode();
         userRepository.findById(receiptCode)
@@ -54,6 +70,7 @@ public class GraphServiceImpl implements GraphService{
             GraphResponse graphResponse = GraphResponse.builder()
                     .id(graph.getId())
                     .value(value)
+                    .createAt(graph.getCreateAt())
                     .build();
             responses.add(graphResponse);
         }
@@ -72,6 +89,7 @@ public class GraphServiceImpl implements GraphService{
                 .weight(graphCreateRequest.getWeight())
                 .bodyFatMass(graphCreateRequest.getBodyFatMass())
                 .muscleMass(graphCreateRequest.getMuscleMass())
+                .createAt(LocalDate.now())
                 .build()
         );
     }
