@@ -21,6 +21,11 @@ public class GraphController {
         return graphService.getGraph(graphType);
     }
 
+    @GetMapping("/check")
+    public boolean getCheckToday() {
+        return graphService.checkGraphToday();
+    }
+
     @PostMapping
     public void createGraph(@RequestBody GraphRequest graphCreateRequest) {
         graphService.createGraph(graphCreateRequest);
