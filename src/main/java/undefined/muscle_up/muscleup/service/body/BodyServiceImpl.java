@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -63,12 +64,11 @@ public class BodyServiceImpl implements BodyService{
 
         bodyImageRepository.save(
                 BodyImage.builder()
-                .imageName(imageName)
+                .imageName(image.isEmpty() ? "null" : imageName)
                 .bodyId(body.getId())
                 .build()
         );
-
-        image.transferTo(new File(bodyImageDirPath, imageName));
+        if(!image.isEmpty()) image.transferTo(new File(bodyImageDirPath, imageName));
     }
 
     @Override
@@ -81,15 +81,20 @@ public class BodyServiceImpl implements BodyService{
         List<BodyResponse> responses = new ArrayList<>();
 
         for(Body body : bodyList) {
+            BodyImage bodyImage = bodyImageRepository.findByBodyId(body.getId())
+                    .orElseThrow(RuntimeException::new);
+
             BodyResponse bodyResponse = BodyResponse.builder()
                     .bodyId(body.getId())
                     .title(body.getTitle())
                     .content(body.getContent())
                     .createdAt(body.getCreatedAt())
+                    .imageName(bodyImage.getImageName().equals("null") ? "null" : bodyImage.getImageName())
                     .build();
 
             responses.add(bodyResponse);
         }
+        Collections.reverse(responses);
 
         return responses;
     }
