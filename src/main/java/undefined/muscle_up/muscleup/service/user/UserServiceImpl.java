@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
         UserImage userImage = userImageRepository.save(
                 UserImage.builder()
-                    .userId(user.getId())
+                    .user(user)
                     .imageName(fileName)
                     .build()
         );

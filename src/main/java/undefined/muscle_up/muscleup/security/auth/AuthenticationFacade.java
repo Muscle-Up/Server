@@ -12,7 +12,7 @@ public class AuthenticationFacade {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public Integer getReceiptCode(){
+    public Integer getId(){
         Authentication auth = this.getAuthentication();
         if(auth.getPrincipal() instanceof  AuthDetails){
             return ((AuthDetails) auth.getPrincipal()).getUser().getId();

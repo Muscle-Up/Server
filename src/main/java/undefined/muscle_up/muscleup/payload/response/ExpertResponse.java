@@ -8,5 +8,7 @@ import lombok.Getter;
 public class ExpertResponse {
     private Integer uuid;
     private String introduction;
+    private String certificateName;
+    private String certificateImage;
     private String name;
 }
