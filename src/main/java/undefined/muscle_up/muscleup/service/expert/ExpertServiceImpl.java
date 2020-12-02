@@ -2,28 +2,31 @@ package undefined.muscle_up.muscleup.service.expert;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.entitys.image.MasterImage;
+import undefined.muscle_up.muscleup.entitys.image.UserImage;
 import undefined.muscle_up.muscleup.entitys.image.repository.MasterImageRepository;
+import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.payload.request.RegistrationRequest;
 import undefined.muscle_up.muscleup.payload.response.ExpertResponse;
 import undefined.muscle_up.muscleup.payload.response.PageResponse;
+import undefined.muscle_up.muscleup.payload.response.expert_page.ExpertPageResponse;
+import undefined.muscle_up.muscleup.payload.response.expert_page.MyExpertPageResponse;
+import undefined.muscle_up.muscleup.payload.response.expert_page.TargetExpertPageResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import javax.transaction.Transactional;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,6 +34,7 @@ import java.util.UUID;
 public class ExpertServiceImpl implements ExpertService{
 
     private final UserRepository userRepository;
+    private final UserImageRepository userImageRepository;
     private final MasterImageRepository masterImageRepository;
 
     private final AuthenticationFacade authenticationFacade;
@@ -51,8 +55,10 @@ public class ExpertServiceImpl implements ExpertService{
             expertResponses.add(
                     ExpertResponse.builder()
                         .uuid(user.getId())
-                        .introduction(user.getIntroduction())
                         .name(user.getName())
+                        .introduction(user.getIntroduction())
+                        .certificateName(user.getCertificateName())
+                        .certificateImage(user.getMasterImage().getImageName())
                         .build()
             );
         }
@@ -66,58 +72,51 @@ public class ExpertServiceImpl implements ExpertService{
 
     @SneakyThrows
     @Override
-    public void registration(String introduction, MultipartFile image) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+    public void registration(RegistrationRequest registrationRequest) {
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
         if (user.getType().equals(UserType.EXPERT)) throw new RuntimeException();
 
-        userRepository.save(user.update(introduction, UserType.EXPERT));
+        userRepository.save(user.update(registrationRequest.getIntroduction(),
+                                        UserType.EXPERT,
+                                        registrationRequest.getCertificateName(),
+                                        registrationRequest.getAcquisitionDate()));
 
         String fileName = UUID.randomUUID().toString();
 
         masterImageRepository.save(
                 MasterImage.builder()
-                    .userId(user.getId())
+                    .user(user)
                     .imageName(fileName)
                     .build()
         );
 
-        image.transferTo(new File(imageDirPath, fileName));
-    }
-
-    @Override
-    @Transactional
-    public void deleteExpert() {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
-
-        userRepository.save(user.update("",UserType.USER));
-
-       MasterImage masterImage = masterImageRepository.deleteByUserId(user.getId())
-               .orElseThrow(RuntimeException::new);
-
-       new File(imageDirPath, masterImage.getImageName()).delete();
+        registrationRequest.getCertificateImage().transferTo(new File(imageDirPath, fileName));
     }
 
     @SneakyThrows
     @Override
-    public byte[] getImage(String imageName) {
-        File file = new File(imageDirPath, imageName);
-        if (!file.exists())
-            throw new RuntimeException();
+    @Transactional
+    public void deleteExpert() {
+        Integer receiptCode = authenticationFacade.getId();
+        User user = userRepository.findById(receiptCode)
+                .orElseThrow(RuntimeException::new);
 
-        InputStream inputStream = new FileInputStream(file);
+        userRepository.save(user.update("", UserType.USER, "", null));
 
-        return IOUtils.toByteArray(inputStream);
+        MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
+               .orElseThrow(RuntimeException::new);
+
+        masterImageRepository.delete(masterImage);
+        Files.delete(new File(imageDirPath, masterImage.getImageName()).toPath());
     }
 
     @SneakyThrows
     @Override
     public void updateImage(MultipartFile image) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -132,6 +131,52 @@ public class ExpertServiceImpl implements ExpertService{
         masterImageRepository.save(masterImage.update(fileName));
 
         image.transferTo(new File(imageDirPath, fileName));
+    }
+
+    @Override
+    public MyExpertPageResponse myExpertPage() {
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(RuntimeException::new);
+
+        return getExpertPage(user, MyExpertPageResponse.class);
+    }
+
+    @Override
+    public TargetExpertPageResponse targetExpertPage(Integer expertId) {
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(RuntimeException::new);
+
+        User target = userRepository.findById(expertId)
+                .orElseThrow(RuntimeException::new);
+
+        TargetExpertPageResponse response = getExpertPage(target, TargetExpertPageResponse.class);
+        response.isMine(user.equals(target));
+
+        return response;
+    }
+
+    @SneakyThrows
+    private <T extends ExpertPageResponse> T getExpertPage(User user, Class<T> tClass) {
+        UserImage userImage = userImageRepository.findById(user.getId())
+                .orElseThrow(RuntimeException::new);
+
+        MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
+                .orElseThrow(RuntimeException::new);
+
+        return tClass.cast(
+                tClass.getConstructor(ExpertPageResponse.class).newInstance(
+                        ExpertPageResponse.builder()
+                                .name(user.getName())
+                                .introduction(user.getIntroduction())
+                                .age(user.getAge())
+                                .type(user.getType())
+                                .certificateName(user.getCertificateName())
+                                .acquisitionDate(user.getAcquisitionDate())
+                                .userImage(userImage.getImageName())
+                                .certificateImage(masterImage.getImageName())
+                                .build()
+                )
+        );
     }
 
 }
