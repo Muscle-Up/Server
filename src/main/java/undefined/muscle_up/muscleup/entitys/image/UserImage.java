@@ -1,6 +1,7 @@
 package undefined.muscle_up.muscleup.entitys.image;
 
 import lombok.*;
+import undefined.muscle_up.muscleup.entitys.user.User;
 
 import javax.persistence.*;
 
@@ -15,15 +16,18 @@ public class UserImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
-    private Integer userId;
-
     private String imageName;
 
+<<<<<<< HEAD
     public UserImage update(String imageName) {
         this.imageName = imageName;
 
         return this;
     }
+=======
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+>>>>>>> develop
 
 }

@@ -15,9 +15,13 @@ public class BodyImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
     private Integer bodyId;
 
     private String imageName;
 
+    public BodyImage update(String imageName) {
+        this.imageName = imageName;
+
+        return this;
+    }
 }
