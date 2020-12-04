@@ -18,7 +18,7 @@ public class MessageRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String roomSeq;
+    private String roomId;
 
     private Integer userId;
 
