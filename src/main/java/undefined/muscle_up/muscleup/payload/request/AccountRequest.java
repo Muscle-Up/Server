@@ -19,5 +19,5 @@ public class AccountRequest {
 
     @NotEmpty
     private String password;
-    
+
 }
