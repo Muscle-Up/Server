@@ -1,6 +1,7 @@
 package undefined.muscle_up.muscleup.entitys.message;
 
 import lombok.*;
+import undefined.muscle_up.muscleup.entitys.message.type.MessageType;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 
 import javax.persistence.Entity;
@@ -20,12 +21,14 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer message;
+    private MessageType messageType;
 
-    private LocalDateTime time;
+    private String content;
 
-    private UserType type;
+    private String roomId;
 
-    private String roomSeq;
+    private Integer senderId;
+
+    private boolean isRead;
 
 }
