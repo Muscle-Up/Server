@@ -20,4 +20,10 @@ public class UserImage {
 
     private String imageName;
 
+    public UserImage update(String imageName) {
+        this.imageName = imageName;
+
+        return this;
+    }
+
 }
