@@ -10,7 +10,6 @@ import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
-import undefined.muscle_up.muscleup.payload.request.ChangePwRequest;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.SignUpRequest;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
