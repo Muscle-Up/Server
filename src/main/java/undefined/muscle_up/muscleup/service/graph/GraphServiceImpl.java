@@ -43,7 +43,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public boolean checkGraphToday() {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -58,7 +58,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public List<GraphResponse> getGraph(GraphType graphType) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -79,7 +79,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void createGraph(GraphRequest graphCreateRequest) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -96,7 +96,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void updateGraph(GraphRequest graphUpdateRequest, Integer graphId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -112,7 +112,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void deleteGraph(Integer graphId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
