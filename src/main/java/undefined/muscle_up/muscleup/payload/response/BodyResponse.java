@@ -11,5 +11,6 @@ public class BodyResponse {
     private Integer bodyId;
     private String title;
     private String content;
+    private String imageName;
     private LocalDate createdAt;
 }
