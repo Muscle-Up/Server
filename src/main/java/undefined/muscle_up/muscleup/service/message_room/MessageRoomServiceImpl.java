@@ -31,7 +31,7 @@ public class MessageRoomServiceImpl implements MessageRoomService {
 
     @Override
     public void createMessageRoom(Integer targetId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -55,7 +55,7 @@ public class MessageRoomServiceImpl implements MessageRoomService {
 
     @Override
     public List<MessageRoomListResponse> getMessageRoomList() {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 

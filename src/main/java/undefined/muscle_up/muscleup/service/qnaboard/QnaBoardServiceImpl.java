@@ -48,7 +48,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @SneakyThrows
     @Override
     public void write(String title, String content, MultipartFile[] images) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.save(
@@ -104,7 +104,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
 
     @Override
     public QnaBoardContentResponse getBoardContent(Integer boardId) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
@@ -144,7 +144,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Override
     @Transactional
     public void like(Integer boardId) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
@@ -168,7 +168,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Override
     @Transactional
     public void updateBoard(Integer boardId, String title, String content, MultipartFile[] images) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
@@ -203,7 +203,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Override
     @Transactional
     public void deleteBoard(Integer boardId) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)

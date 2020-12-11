@@ -27,7 +27,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public List<MessageResponse> getMessageList(String roomId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 

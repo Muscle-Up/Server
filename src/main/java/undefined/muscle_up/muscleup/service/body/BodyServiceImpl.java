@@ -46,7 +46,7 @@ public class BodyServiceImpl implements BodyService{
     @SneakyThrows
     @Override
     public void bodyCreate(String title, String content, MultipartFile image) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -73,7 +73,7 @@ public class BodyServiceImpl implements BodyService{
 
     @Override
     public List<BodyResponse> getBodyList() {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -97,7 +97,7 @@ public class BodyServiceImpl implements BodyService{
     @SneakyThrows
     @Override
     public byte[] getBodyImage(String imageName) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -111,7 +111,7 @@ public class BodyServiceImpl implements BodyService{
 
     @Override
     public void bodyDelete(Integer bodyId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -132,7 +132,7 @@ public class BodyServiceImpl implements BodyService{
     @Override
     @Transactional
     public void bodyImageDelete(Integer bodyId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -146,7 +146,7 @@ public class BodyServiceImpl implements BodyService{
 
     @Override
     public void bodyUpdate(BodyUpdateRequest bodyUpdateRequest, Integer bodyId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -162,7 +162,7 @@ public class BodyServiceImpl implements BodyService{
     @SneakyThrows
     @Override
     public void bodyImageUpdate(MultipartFile image, Integer bodyId) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
