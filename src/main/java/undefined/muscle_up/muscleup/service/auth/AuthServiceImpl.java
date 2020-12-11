@@ -30,7 +30,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenServiceImpl refreshTokenService;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     public TokenResponse signIn(AccountRequest accountRequest) {

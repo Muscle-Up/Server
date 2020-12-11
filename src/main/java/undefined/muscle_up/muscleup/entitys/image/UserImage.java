@@ -18,7 +18,14 @@ public class UserImage {
 
     private String imageName;
 
+    public UserImage update(String imageName) {
+        this.imageName = imageName;
+
+        return this;
+    }
+  
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+  
 }

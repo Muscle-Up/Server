@@ -90,6 +90,10 @@ public class JwtProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    public String getUserId(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
     public boolean isRefreshToken(String token){
         return Jwts.parser().setSigningKey(secretKey)
                 .parseClaimsJws(token).getBody().get("type").equals("refresh_token");
