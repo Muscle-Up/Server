@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePw(String password) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public void updateUser(UpdateRequest updateRequest) {
-        Integer receiptCode = authenticationFacade.getReceiptCode();
+        Integer receiptCode = authenticationFacade.getId();
         User user = userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MainPageResponse mainPage() {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         return MainPageResponse.builder()

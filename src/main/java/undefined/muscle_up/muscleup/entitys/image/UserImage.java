@@ -27,5 +27,9 @@ public class UserImage {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
   
 }

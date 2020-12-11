@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void postComment(Integer boardId, String content) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void postSubComment(Integer commentId, String content) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
@@ -106,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void changeComment(Integer commentId, String content) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         Comment comment = commentRepository.findById(commentId)
@@ -119,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void changeSubComment(Integer subCommentId, String content) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         SubComment subComment = subCommentRepository.findById(subCommentId)
@@ -133,7 +133,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Integer commentId) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         Comment comment = commentRepository.findById(commentId)
@@ -147,7 +147,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteSubComment(Integer subCommentId) {
-        User user = userRepository.findById(authenticationFacade.getReceiptCode())
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         SubComment subComment = subCommentRepository.findById(subCommentId)

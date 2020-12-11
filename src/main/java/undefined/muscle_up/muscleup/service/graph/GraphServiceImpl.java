@@ -43,6 +43,7 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public boolean checkGraphToday() {
+    public void createGraph(GraphRequest graphCreateRequest) {
         Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
@@ -56,7 +57,7 @@ public class GraphServiceImpl implements GraphService{
         return false;
     }
 
-    @Override
+    @Overridez
     public List<GraphResponse> getGraph(GraphType graphType) {
         Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
