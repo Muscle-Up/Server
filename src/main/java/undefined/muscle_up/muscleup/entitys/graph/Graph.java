@@ -1,7 +1,6 @@
 package undefined.muscle_up.muscleup.entitys.graph;
 
 import lombok.*;
-import undefined.muscle_up.muscleup.entitys.graph.enums.GraphType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
