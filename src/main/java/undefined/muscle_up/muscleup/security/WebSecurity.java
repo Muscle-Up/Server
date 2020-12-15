@@ -9,11 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class WebSecurity extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private final JwtProvider jwtProvider;
 
@@ -32,9 +34,21 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/user/**").permitAll()
+                .antMatchers("/muscleup/**").permitAll()
                 .anyRequest().authenticated().and()
                 .apply(new JwtConfigurer(jwtProvider));
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("8000")
+                .allowedHeaders("8001")
+                .allowedHeaders("*");
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
