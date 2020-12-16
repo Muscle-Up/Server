@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("muscleup")
 public class MuscleUpController {
 
-        @GetMapping
-        public String muscleUp(@RequestParam String param) {
-            return param;
-        }
+    @GetMapping
+    public String muscleUp(@RequestParam String param) {
+        return param;
+    }
 }
