@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -52,23 +53,22 @@ public class BodyServiceImpl implements BodyService{
 
         Body body = bodyRepository.save(
                 Body.builder()
-                .userId(receiptCode)
-                .createdAt(LocalDate.now())
-                .title(title)
-                .content(content)
-                .build()
+                        .userId(receiptCode)
+                        .createdAt(LocalDate.now())
+                        .title(title)
+                        .content(content)
+                        .build()
         );
 
         String imageName = UUID.randomUUID().toString();
 
         bodyImageRepository.save(
                 BodyImage.builder()
-                .imageName(imageName)
-                .bodyId(body.getId())
-                .build()
+                        .imageName(image.isEmpty() ? "null" : imageName)
+                        .bodyId(body.getId())
+                        .build()
         );
-
-        image.transferTo(new File(bodyImageDirPath, imageName));
+        if(!image.isEmpty()) image.transferTo(new File(bodyImageDirPath, imageName));
     }
 
     @Override
@@ -81,15 +81,20 @@ public class BodyServiceImpl implements BodyService{
         List<BodyResponse> responses = new ArrayList<>();
 
         for(Body body : bodyList) {
+            BodyImage bodyImage = bodyImageRepository.findByBodyId(body.getId())
+                    .orElseThrow(RuntimeException::new);
+
             BodyResponse bodyResponse = BodyResponse.builder()
                     .bodyId(body.getId())
                     .title(body.getTitle())
                     .content(body.getContent())
                     .createdAt(body.getCreatedAt())
+                    .imageName(bodyImage.getImageName())
                     .build();
 
             responses.add(bodyResponse);
         }
+        Collections.reverse(responses);
 
         return responses;
     }
@@ -115,7 +120,7 @@ public class BodyServiceImpl implements BodyService{
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
-        Body body = bodyRepository.findById(bodyId)
+        bodyRepository.findById(bodyId)
                 .orElseThrow(RuntimeException::new);
 
         BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
@@ -125,7 +130,7 @@ public class BodyServiceImpl implements BodyService{
 
         bodyImageRepository.deleteById(bodyImage.getId());
 
-        bodyRepository.deleteById(body.getId());
+        bodyRepository.deleteById(bodyId);
     }
 
     @SneakyThrows

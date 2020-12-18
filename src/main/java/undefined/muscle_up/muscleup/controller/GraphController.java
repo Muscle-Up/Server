@@ -2,6 +2,7 @@ package undefined.muscle_up.muscleup.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import undefined.muscle_up.muscleup.entitys.graph.enums.GraphType;
 import undefined.muscle_up.muscleup.payload.request.GraphRequest;
 import undefined.muscle_up.muscleup.payload.response.GraphResponse;
 import undefined.muscle_up.muscleup.service.graph.GraphService;
@@ -15,9 +16,14 @@ public class GraphController {
 
     private final GraphService graphService;
 
-    @GetMapping
-    public List<GraphResponse> getGraph() {
-        return graphService.getGraph();
+    @GetMapping("/{graphType}")
+    public List<GraphResponse> getGraph(@PathVariable GraphType graphType ){
+        return graphService.getGraph(graphType);
+    }
+
+    @GetMapping("/check")
+    public boolean getCheckToday() {
+        return graphService.checkGraphToday();
     }
 
     @PostMapping
@@ -27,8 +33,8 @@ public class GraphController {
 
     @PutMapping("/{graphId}")
     public void updateGraph(@PathVariable Integer graphId,
-                            @RequestBody GraphRequest graphRequest) {
-        graphService.updateGraph(graphRequest, graphId);
+                            @RequestBody GraphRequest graphUpdateRequest) {
+        graphService.updateGraph(graphUpdateRequest, graphId);
     }
 
     @DeleteMapping("/{graphId}")

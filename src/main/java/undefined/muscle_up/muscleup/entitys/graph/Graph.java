@@ -2,10 +2,8 @@ package undefined.muscle_up.muscleup.entitys.graph;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -21,12 +19,13 @@ public class Graph {
 
     private Integer userId;
 
-    private double tall;
+    @Column(unique = true)
+    private LocalDate createAt;
 
     private double weight;
 
-    private double muscular_strength;
+    private double muscleMass;
 
-    private double fat_percentage;
+    private double bodyFatMass;
 }
 
