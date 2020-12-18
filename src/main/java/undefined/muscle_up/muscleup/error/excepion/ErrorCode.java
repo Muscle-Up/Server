@@ -11,7 +11,8 @@ public enum  ErrorCode {
     EXPIRED_TOKEN(401,"Expired Token"),
     PERMISSION_DENIED_EXCEPTION(401,"Permission Denied"),
     USER_NOT_FOUND(404,"User Not Found"),
-    IMAGE_NOT_FOUND(404, "Image Not Found");
+    IMAGE_NOT_FOUND(404, "Image Not Found"),
+    USER_ALREADY_EXCEPTION(409, "User Already Exception");
 
     private final int status;
     private final String message;
