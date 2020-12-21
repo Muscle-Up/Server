@@ -62,14 +62,17 @@ public class UserServiceImpl implements UserService {
                     .build()
         );
 
-        try {
-            File file = new File(imagePath, fileName);
-            if (!file.createNewFile()) throw new Exception();
-            signUpRequest.getImage().transferTo(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+        File file = new File(imagePath + "/" + userImage.getImageName());
+        signUpRequest.getImage().transferTo(file);
+
+//        try {
+//            File file = new File(imagePath, fileName);
+//            if (!file.createNewFile()) throw new Exception();
+//            signUpRequest.getImage().transferTo(file);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException();
+//        }
     }
 
     @Override
