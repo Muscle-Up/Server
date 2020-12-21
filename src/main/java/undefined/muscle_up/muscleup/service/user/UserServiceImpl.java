@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
             file.createNewFile();
             signUpRequest.getImage().transferTo(file);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }
