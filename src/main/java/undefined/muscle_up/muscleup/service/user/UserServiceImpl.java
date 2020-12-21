@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationFacade authenticationFacade;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${image.upload.dir}")
+    @Value("${image.file.path}")
     private String imagePath;
 
     @SneakyThrows
