@@ -63,7 +63,12 @@ public class UserServiceImpl implements UserService {
         );
 
         File file = new File(imagePath, userImage.getImageName());
-        signUpRequest.getImage().transferTo(file);
+        try {
+            file.createNewFile();
+            signUpRequest.getImage().transferTo(file);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
     @Override
