@@ -16,6 +16,7 @@ import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -64,7 +65,10 @@ public class UserServiceImpl implements UserService {
         );
 
         File file = new File(imagePath, userImage.getImageName());
-        signUpRequest.getImage().transferTo(file.getAbsoluteFile());
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(signUpRequest.getImage().getBytes());
+        fos.close();
+        //signUpRequest.getImage().transferTo(file.getAbsoluteFile());
 
 //        try {
 //            File file = new File(imagePath, fileName);
