@@ -55,14 +55,14 @@ public class UserServiceImpl implements UserService {
 
         String fileName = UUID.randomUUID().toString();
 
-        UserImage userImage = userImageRepository.save(
+        userImageRepository.save(
                 UserImage.builder()
                     .user(user)
                     .imageName(fileName)
                     .build()
         );
 
-        File file = new File(imagePath, userImage.getImageName());
+        File file = new File(imagePath, fileName);
         signUpRequest.getImage().transferTo(file);
     }
 
