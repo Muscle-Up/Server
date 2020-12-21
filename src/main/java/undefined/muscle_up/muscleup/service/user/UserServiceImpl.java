@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
                     .build()
         );
 
-        new File(imagePath).mkdirs();
+        new File(imagePath).mkdir();
         File file = new File(imagePath, userImage.getImageName());
         signUpRequest.getImage().transferTo(file);
     }
