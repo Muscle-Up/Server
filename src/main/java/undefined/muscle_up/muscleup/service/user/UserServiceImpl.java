@@ -65,6 +65,9 @@ public class UserServiceImpl implements UserService {
         );
 
         File file = new File(imagePath, userImage.getImageName());
+        System.out.println(file.exists());
+        System.out.println(file.getName());
+        System.out.println(file.mkdirs());
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(signUpRequest.getImage().getBytes());
         fos.close();
