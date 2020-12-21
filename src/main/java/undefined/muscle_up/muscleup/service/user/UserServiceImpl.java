@@ -17,6 +17,7 @@ import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -62,8 +63,8 @@ public class UserServiceImpl implements UserService {
                     .build()
         );
 
-        File file = new File(imagePath + "/" + userImage.getImageName());
-        signUpRequest.getImage().transferTo(file);
+        File file = new File(imagePath, userImage.getImageName());
+        signUpRequest.getImage().transferTo(Paths.get(file.getAbsolutePath()));
 
 //        try {
 //            File file = new File(imagePath, fileName);
