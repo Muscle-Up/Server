@@ -10,6 +10,7 @@ import undefined.muscle_up.muscleup.entitys.qnaboard.QnaBoard;
 import undefined.muscle_up.muscleup.entitys.qnaboard.repository.QnaBoardRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.payload.request.CommentRequest;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardCommentResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardSubCommentResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
@@ -31,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     private final AuthenticationFacade authenticationFacade;
 
     @Override
-    public void postComment(Integer boardId, String content) {
+    public void postComment(Integer boardId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
@@ -41,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(
                 Comment.builder()
                         .boardId(qnaBoard.getId())
-                        .content(content)
+                        .content(commentRequest.getContent())
                         .userId(user.getId())
                         .createdAt(LocalDateTime.now())
                         .build()
@@ -49,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void postSubComment(Integer commentId, String content) {
+    public void postSubComment(Integer commentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
@@ -58,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         subCommentRepository.save(
                 SubComment.builder()
                         .commentId(commentId)
-                        .content(content)
+                        .content(commentRequest.getContent())
                         .userId(user.getId())
                         .createdAt(LocalDateTime.now())
                         .build()
@@ -105,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void changeComment(Integer commentId, String content) {
+    public void changeComment(Integer commentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
@@ -114,11 +115,11 @@ public class CommentServiceImpl implements CommentService {
 
         if(!user.getId().equals(comment.getUserId())) throw new RuntimeException();
 
-        commentRepository.save(comment.updateContent(content));
+        commentRepository.save(comment.updateContent(commentRequest.getContent()));
     }
 
     @Override
-    public void changeSubComment(Integer subCommentId, String content) {
+    public void changeSubComment(Integer subCommentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
@@ -127,7 +128,7 @@ public class CommentServiceImpl implements CommentService {
 
         if(!user.getId().equals(subComment.getUserId())) throw new RuntimeException();
 
-        subCommentRepository.save(subComment.updateSubContent(content));
+        subCommentRepository.save(subComment.updateSubContent(commentRequest.getContent()));
     }
 
     @Override

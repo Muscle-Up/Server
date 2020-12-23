@@ -2,9 +2,11 @@ package undefined.muscle_up.muscleup.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import undefined.muscle_up.muscleup.payload.request.CommentRequest;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardCommentResponse;
 import undefined.muscle_up.muscleup.service.comment.CommentService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,14 +18,14 @@ public class CommentController {
 
     @PostMapping("/{boardId}")
     public void postComment(@PathVariable Integer boardId,
-                            @RequestBody String content) {
-        commentService.postComment(boardId, content);
+                            @RequestBody @Valid CommentRequest commentRequest) {
+        commentService.postComment(boardId, commentRequest);
     }
 
     @PostMapping("/sub/{commentId}")
     public void postSubComment(@PathVariable Integer commentId,
-                               @RequestBody String content) {
-        commentService.postSubComment(commentId, content);
+                               @RequestBody @Valid CommentRequest commentRequest) {
+        commentService.postSubComment(commentId, commentRequest);
     }
 
     @GetMapping("/{boardId}")
@@ -33,14 +35,14 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public void changeComment(@PathVariable Integer commentId,
-                              @RequestBody String content) {
-        commentService.changeComment(commentId, content);
+                              @RequestBody @Valid CommentRequest commentRequest) {
+        commentService.changeComment(commentId, commentRequest);
     }
 
     @PutMapping("/sub/{subCommentId}")
     public void changeSubComment(@PathVariable Integer subCommentId,
-                                 @RequestBody String content) {
-        commentService.changeSubComment(subCommentId, content);
+                                 @RequestBody @Valid CommentRequest commentRequest) {
+        commentService.changeSubComment(subCommentId, commentRequest);
     }
 
     @DeleteMapping("/{commentId}")
