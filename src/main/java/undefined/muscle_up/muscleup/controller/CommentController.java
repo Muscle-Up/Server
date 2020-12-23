@@ -16,13 +16,13 @@ public class CommentController {
 
     @PostMapping("/{boardId}")
     public void postComment(@PathVariable Integer boardId,
-                            @RequestParam String content) {
+                            @RequestBody String content) {
         commentService.postComment(boardId, content);
     }
 
     @PostMapping("/sub/{commentId}")
     public void postSubComment(@PathVariable Integer commentId,
-                               @RequestParam String content) {
+                               @RequestBody String content) {
         commentService.postSubComment(commentId, content);
     }
 
@@ -33,13 +33,13 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public void changeComment(@PathVariable Integer commentId,
-                              @RequestParam String content) {
+                              @RequestBody String content) {
         commentService.changeComment(commentId, content);
     }
 
     @PutMapping("/sub/{subCommentId}")
     public void changeSubComment(@PathVariable Integer subCommentId,
-                                 @RequestParam String content) {
+                                 @RequestBody String content) {
         commentService.changeSubComment(subCommentId, content);
     }
 
