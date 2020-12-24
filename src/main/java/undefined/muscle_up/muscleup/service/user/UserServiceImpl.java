@@ -10,6 +10,7 @@ import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.FileNotFoundException;
 import undefined.muscle_up.muscleup.exceptions.UserAlreadyException;
 import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
             String fileName = UUID.randomUUID().toString();
 
             UserImage userImage = userImageRepository.findByUserId(user.getId())
-                    .orElseThrow(ImageNotFoundException::new);
+                    .orElseThrow(FileNotFoundException::new);
 
             File file = new File(imagePath, userImage.getImageName());
             Files.deleteIfExists(file.toPath());
