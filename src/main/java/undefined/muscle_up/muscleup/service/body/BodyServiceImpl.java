@@ -146,7 +146,7 @@ public class BodyServiceImpl implements BodyService{
 
         new File(bodyImageDirPath, bodyImage.getImageName()).delete();
 
-        bodyImageRepository.deleteById(bodyImage.getId());
+        bodyImageRepository.save(bodyImage.update("null"));
     }
 
     @Override
