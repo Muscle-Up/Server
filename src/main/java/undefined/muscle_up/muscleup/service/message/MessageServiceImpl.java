@@ -9,6 +9,8 @@ import undefined.muscle_up.muscleup.entitys.message.repository.MessageRoomReposi
 import undefined.muscle_up.muscleup.entitys.message.type.MessageType;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.MessageRoomNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.SenderNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.MessageResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
@@ -27,8 +29,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public List<MessageResponse> getMessageList(String roomId) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         List<Message> messageList = messageRepository.findBySenderIdAndRoomId(user.getId(), roomId);
@@ -36,7 +37,7 @@ public class MessageServiceImpl implements MessageService{
         List<MessageResponse> messageResponse = new ArrayList<>();
         for (Message message : messageList){
             User sender = userRepository.findById(message.getSenderId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(SenderNotFoundException::new);
 
             messageResponse.add(
                     MessageResponse.builder()
@@ -56,7 +57,7 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public void sendMessage(User user, String roomId, String content, MessageType messageType) {
         boolean messageRoom = messageRoomRepository.existsByRoomIdAndUserId(roomId, user.getId());
-        if(!messageRoom) throw new RuntimeException();
+        if(!messageRoom) throw new MessageRoomNotFoundException();
 
         messageRepository.save(
                 Message.builder()

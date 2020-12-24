@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 @Service
@@ -20,7 +21,7 @@ public class ImageServiceImpl implements ImageService{
     public byte[] getImage(String imageName) {
         File file = new File(imageDirPath, imageName);
         if (!file.exists())
-            throw new RuntimeException();
+            throw new FileNotFoundException();
 
         InputStream inputStream = new FileInputStream(file);
 

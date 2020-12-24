@@ -10,6 +10,9 @@ import undefined.muscle_up.muscleup.entitys.message.repository.MessageRepository
 import undefined.muscle_up.muscleup.entitys.message.repository.MessageRoomRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.ExpertImageNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.TargetNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.MessageRoomListResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
@@ -31,12 +34,11 @@ public class MessageRoomServiceImpl implements MessageRoomService {
 
     @Override
     public void createMessageRoom(Integer targetId) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         User target = userRepository.findById(targetId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(TargetNotFoundException::new);
 
         String roomId = UUID.randomUUID().toString();
         messageRoomRepository.save(
@@ -55,8 +57,7 @@ public class MessageRoomServiceImpl implements MessageRoomService {
 
     @Override
     public List<MessageRoomListResponse> getMessageRoomList() {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
+        User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(RuntimeException::new);
 
         List<MessageRoom> rooms = messageRoomRepository.findRoomsForTarget(user.getId());
@@ -64,13 +65,13 @@ public class MessageRoomServiceImpl implements MessageRoomService {
 
         for (MessageRoom messageRoom : rooms) {
             User target = userRepository.findById(messageRoom.getUserId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(TargetNotFoundException::new);
 
             MasterImage masterImage = masterImageRepository.findByUserId(messageRoom.getUserId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(ExpertImageNotFoundException::new);
 
             Optional<Message> message = messageRepository.findTopByRoomIdOrderByIdDesc(messageRoom.getRoomId());
-            Integer senderId = message.map(Message::getSenderId).orElseThrow(RuntimeException::new);
+            Integer senderId = message.map(Message::getSenderId).orElseThrow(UserNotFoundException::new);
             String lastMessage = message.map(Message::getContent).orElse("");
             boolean isRead;
             if(user.getId().equals(senderId)) {
