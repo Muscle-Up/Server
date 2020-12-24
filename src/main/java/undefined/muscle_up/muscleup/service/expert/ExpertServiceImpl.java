@@ -14,6 +14,10 @@ import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.ExpertImageNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.TargetNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserAlreadyRegisteredException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.request.RegistrationRequest;
 import undefined.muscle_up.muscleup.payload.response.ExpertResponse;
 import undefined.muscle_up.muscleup.payload.response.PageResponse;
@@ -73,11 +77,10 @@ public class ExpertServiceImpl implements ExpertService{
     @SneakyThrows
     @Override
     public void registration(RegistrationRequest registrationRequest) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
-        if (user.getType().equals(UserType.EXPERT)) throw new RuntimeException();
+        if (user.getType().equals(UserType.EXPERT)) throw new UserAlreadyRegisteredException();
 
         userRepository.save(user.update(registrationRequest.getIntroduction(),
                                         UserType.EXPERT,
@@ -100,14 +103,13 @@ public class ExpertServiceImpl implements ExpertService{
     @Override
     @Transactional
     public void deleteExpert() {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         userRepository.save(user.update("", UserType.USER, "", null));
 
         MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
-               .orElseThrow(RuntimeException::new);
+               .orElseThrow(ExpertImageNotFoundException::new);
 
         masterImageRepository.delete(masterImage);
         Files.delete(new File(imageDirPath, masterImage.getImageName()).toPath());
@@ -116,14 +118,13 @@ public class ExpertServiceImpl implements ExpertService{
     @SneakyThrows
     @Override
     public void updateImage(MultipartFile image) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         String fileName = UUID.randomUUID().toString();
 
         MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(ExpertImageNotFoundException::new);
 
         File file = new File(imageDirPath, masterImage.getImageName());
         if (file.exists()) file.delete();
@@ -136,7 +137,7 @@ public class ExpertServiceImpl implements ExpertService{
     @Override
     public MyExpertPageResponse myExpertPage() {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         return getExpertPage(user, MyExpertPageResponse.class);
     }
@@ -144,10 +145,10 @@ public class ExpertServiceImpl implements ExpertService{
     @Override
     public TargetExpertPageResponse targetExpertPage(Integer expertId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         User target = userRepository.findById(expertId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(TargetNotFoundException::new);
 
         TargetExpertPageResponse response = getExpertPage(target, TargetExpertPageResponse.class);
         response.isMine(user.equals(target));
@@ -158,10 +159,10 @@ public class ExpertServiceImpl implements ExpertService{
     @SneakyThrows
     private <T extends ExpertPageResponse> T getExpertPage(User user, Class<T> tClass) {
         UserImage userImage = userImageRepository.findById(user.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         MasterImage masterImage = masterImageRepository.findByUserId(user.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(ExpertImageNotFoundException::new);
 
         return tClass.cast(
                 tClass.getConstructor(ExpertPageResponse.class).newInstance(
