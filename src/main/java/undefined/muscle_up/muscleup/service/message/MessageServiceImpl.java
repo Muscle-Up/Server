@@ -11,6 +11,7 @@ import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.exceptions.MessageRoomNotFoundException;
 import undefined.muscle_up.muscleup.exceptions.SenderNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.MessageResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
@@ -30,7 +31,7 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public List<MessageResponse> getMessageList(String roomId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         List<Message> messageList = messageRepository.findBySenderIdAndRoomId(user.getId(), roomId);
 
