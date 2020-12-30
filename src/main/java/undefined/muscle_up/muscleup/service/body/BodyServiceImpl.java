@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
-public class BodyServiceImpl implements BodyService{
+public class BodyServiceImpl implements BodyService {
     private final BodyRepository bodyRepository;
     private final BodyImageRepository bodyImageRepository;
     private final UserRepository userRepository;
@@ -36,7 +36,7 @@ public class BodyServiceImpl implements BodyService{
     private final AuthenticationFacade authenticationFacade;
 
     private <T> void setIfNotNull(Consumer<T> setter, T value) {
-        if(value != null) {
+        if (value != null) {
             setter.accept(value);
         }
     }
@@ -46,7 +46,7 @@ public class BodyServiceImpl implements BodyService{
 
     @SneakyThrows
     @Override
-    public void bodyCreate(String title, String content, MultipartFile[] images) {
+    public void bodyCreate(String title, String content, MultipartFile image) {
         Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
@@ -60,17 +60,15 @@ public class BodyServiceImpl implements BodyService{
                         .build()
         );
 
-        for(MultipartFile image : images) {
-            String imageName = UUID.randomUUID().toString();
+        String imageName = UUID.randomUUID().toString();
 
-            bodyImageRepository.save(
-                    BodyImage.builder()
-                            .imageName(image.isEmpty() ? "null" : imageName)
-                            .bodyId(body.getId())
-                            .build()
-            );
-            if (!image.isEmpty()) image.transferTo(new File(bodyImageDirPath, imageName));
-        }
+        bodyImageRepository.save(
+                BodyImage.builder()
+                        .imageName(image.isEmpty() ? "null" : imageName)
+                        .bodyId(body.getId())
+                        .build()
+        );
+        if (!image.isEmpty()) image.transferTo(new File(bodyImageDirPath, imageName));
     }
 
     @Override
@@ -83,20 +81,21 @@ public class BodyServiceImpl implements BodyService{
         List<BodyResponse> responses = new ArrayList<>();
 
 
-        for(Body body : bodyList) {
-            List<BodyImage> images = bodyImageRepository.findAllByBodyId(body.getId());
-            List<String> imageNames = new ArrayList<>();
-
-            for(BodyImage bodyImage : images) {
-                imageNames.add(bodyImage.getImageName());
-            }
+        for (Body body : bodyList) {
+            BodyImage bodyImage = bodyImageRepository.findByBodyId(body.getId())
+                    .orElse(
+                            BodyImage.builder()
+                            .bodyId(body.getId())
+                            .imageName("deleted")
+                            .build()
+                    );
 
             BodyResponse bodyResponse = BodyResponse.builder()
                     .bodyId(body.getId())
                     .title(body.getTitle())
                     .content(body.getContent())
                     .createdAt(body.getCreatedAt())
-                    .imageNames(imageNames)
+                    .imageName(bodyImage.getImageName())
                     .build();
 
             responses.add(bodyResponse);
@@ -114,7 +113,7 @@ public class BodyServiceImpl implements BodyService{
                 .orElseThrow(RuntimeException::new);
 
         File file = new File(bodyImageDirPath, imageName);
-        if(!file.exists()) throw new RuntimeException();
+        if (!file.exists()) throw new RuntimeException();
 
         InputStream input = new FileInputStream(file);
 
@@ -173,38 +172,40 @@ public class BodyServiceImpl implements BodyService{
 
     @SneakyThrows
     @Override
-    public void addBodyImage(MultipartFile[] images, Integer bodyId) {
+    public void addBodyImage(MultipartFile image, Integer bodyId) {
         Integer userId = authenticationFacade.getId();
         userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
 
-        for(MultipartFile image : images) {
-            String imageName = UUID.randomUUID().toString();
+        if(image.isEmpty())
+            throw new RuntimeException("image null");
 
-            bodyImageRepository.save(
-                    BodyImage.builder()
-                    .bodyId(bodyId)
-                    .imageName(image.isEmpty() ? "null" : imageName)
-                    .build()
-            );
+        String imageName = UUID.randomUUID().toString();
 
-            image.transferTo(new File(bodyImageDirPath, imageName));
-        }
+        bodyImageRepository.save(
+                BodyImage.builder()
+                        .bodyId(bodyId)
+                        .imageName(imageName)
+                        .build()
+        );
+        image.transferTo(new File(bodyImageDirPath, imageName));
     }
 
     @SneakyThrows
     @Override
-    public void bodyImageUpdate(MultipartFile image, String name) {
+    public void bodyImageUpdate(MultipartFile image, Integer bodyId) {
         Integer receiptCode = authenticationFacade.getId();
         userRepository.findById(receiptCode)
                 .orElseThrow(RuntimeException::new);
 
+        if(image.isEmpty()) throw new RuntimeException("image null");
+
         String imageName = UUID.randomUUID().toString();
 
-        BodyImage bodyImage = bodyImageRepository.findByImageName(name)
+        BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
                 .orElseThrow(RuntimeException::new);
         File file = new File(bodyImageDirPath, bodyImage.getImageName());
-        if(file.exists()) file.delete();
+        if (file.exists()) file.delete();
 
         bodyImageRepository.save(bodyImage.update(imageName));
 
