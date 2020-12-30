@@ -33,9 +33,21 @@ public class BodyController {
     @PostMapping
     public void bodyBoardCreate(@RequestParam String title,
                                 @RequestParam String content,
-                                @RequestParam MultipartFile bodyImage) {
+                                @RequestParam MultipartFile[] bodyImages) {
 
-        bodyService.bodyCreate(title, content, bodyImage);
+        for(MultipartFile file : bodyImages) {
+            if(!file.isEmpty()) {
+                System.out.println("no");
+            }
+        }
+
+        bodyService.bodyCreate(title, content, bodyImages);
+    }
+
+    @PostMapping("/image/{bodyId}")
+    public void addBodyImage(@PathVariable Integer bodyId,
+                             @RequestParam MultipartFile[] images) {
+        bodyService.addBodyImage(images, bodyId);
     }
 
     @PutMapping("/{bodyId}")
@@ -45,10 +57,10 @@ public class BodyController {
         bodyService.bodyUpdate(bodyUpdateRequest, bodyId);
     }
 
-    @PutMapping("/image/{bodyId}")
+    @PutMapping("/image/{imageName}")
     public void bodyImageUpdate(@RequestParam MultipartFile image,
-                                @PathVariable Integer bodyId) {
-        bodyService.bodyImageUpdate(image, bodyId);
+                                @PathVariable String imageName) {
+        bodyService.bodyImageUpdate(image, imageName);
     }
 
     @DeleteMapping("/{bodyId}")
@@ -56,11 +68,9 @@ public class BodyController {
         bodyService.bodyDelete(bodyId);
     }
 
-    @DeleteMapping("/image/{bodyId}")
-    public void bodyImageDelete(@PathVariable Integer bodyId) {
-        bodyService.bodyImageDelete(bodyId);
+    @DeleteMapping("/image/{imageName}")
+    public void bodyImageDelete(@PathVariable String imageName) {
+        bodyService.bodyImageDelete(imageName);
     }
-
-
 
 }
