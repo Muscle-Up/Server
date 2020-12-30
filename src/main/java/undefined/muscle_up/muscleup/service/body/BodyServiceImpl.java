@@ -156,7 +156,6 @@ public class BodyServiceImpl implements BodyService {
 
     @Override
     public void bodyUpdate(BodyUpdateRequest bodyUpdateRequest, Integer bodyId) {
-        userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(UserNotFoundException::new);
 
         Body body = bodyRepository.findById(bodyId)
