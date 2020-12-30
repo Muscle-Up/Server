@@ -17,6 +17,9 @@ import undefined.muscle_up.muscleup.entitys.qnaboard.repository.QnaBoardReposito
 import undefined.muscle_up.muscleup.entitys.qnaboard.repository.QnaBoardViewRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.BoardNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.WriterNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardContentResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardListResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardResponse;
@@ -49,7 +52,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Override
     public void write(String title, String content, MultipartFile[] images) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.save(
                 QnaBoard.builder()
@@ -84,7 +87,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
 
         for (QnaBoard qnaBoard : qnaBoards) {
             User user = userRepository.findById(qnaBoard.getUserId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(UserNotFoundException::new);
 
             listResponses.add(
                     QnaBoardListResponse.builder()
@@ -105,13 +108,13 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Override
     public QnaBoardContentResponse getBoardContent(Integer boardId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         User writer = userRepository.findById(qnaBoard.getUserId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(WriterNotFoundException::new);
 
         List<String> imageNames = new ArrayList<>();
 
@@ -145,10 +148,10 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Transactional
     public void like(Integer boardId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         if(!qnaBoardLikeRepository.findByBoardIdAndUserId(boardId, user.getId()).isPresent()) {
             qnaBoardRepository.save(qnaBoard.like());
@@ -169,10 +172,10 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Transactional
     public void updateBoard(Integer boardId, String title, String content, MultipartFile[] images) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         if (!user.getId().equals(qnaBoard.getUserId())) throw new RuntimeException();
 
@@ -204,10 +207,10 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     @Transactional
     public void deleteBoard(Integer boardId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         if (!user.getId().equals(qnaBoard.getUserId())) throw new RuntimeException();
 

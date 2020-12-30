@@ -5,7 +5,11 @@ import org.springframework.stereotype.Service;
 import undefined.muscle_up.muscleup.entitys.graph.Graph;
 import undefined.muscle_up.muscleup.entitys.graph.enums.GraphType;
 import undefined.muscle_up.muscleup.entitys.graph.repository.GraphRepository;
+import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.CheckNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.GraphNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.request.GraphRequest;
 import undefined.muscle_up.muscleup.payload.response.GraphResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
@@ -38,16 +42,15 @@ public class GraphServiceImpl implements GraphService{
         else if(type.equals(GraphType.weight))
             return graph.getWeight();
         else
-            throw new RuntimeException();
+            throw new CheckNotFoundException();
     }
 
     @Override
     public boolean checkGraphToday() {
-        Integer receiptCode = authenticationFacade.getId();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
-        List<Graph> graphList = graphRepository.findAllByUserId(receiptCode);
+        List<Graph> graphList = graphRepository.findAllByUserId(user.getId());
 
         for(Graph graph : graphList) {
             if(graph.getCreateAt().isEqual(LocalDate.now()))
@@ -58,11 +61,10 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public List<GraphResponse> getGraph(GraphType graphType) {
-        Integer receiptCode = authenticationFacade.getId();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
-        List<Graph> graphs = graphRepository.findAllByUserId(receiptCode);
+        List<Graph> graphs = graphRepository.findAllByUserId(user.getId());
         List<GraphResponse> responses = new ArrayList<>();
 
         for(Graph graph : graphs) {
@@ -79,13 +81,12 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void createGraph(GraphRequest graphCreateRequest) {
-        Integer receiptCode = authenticationFacade.getId();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         graphRepository.save(
                 Graph.builder()
-                .userId(receiptCode)
+                .userId(user.getId())
                 .weight(graphCreateRequest.getWeight())
                 .bodyFatMass(graphCreateRequest.getBodyFatMass())
                 .muscleMass(graphCreateRequest.getMuscleMass())
@@ -96,12 +97,11 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void updateGraph(GraphRequest graphUpdateRequest, Integer graphId) {
-        Integer receiptCode = authenticationFacade.getId();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         Graph graph = graphRepository.findById(graphId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(GraphNotFoundException::new);
 
         setIfNotNull(graph::setMuscleMass, graphUpdateRequest.getMuscleMass());
         setIfNotNull(graph::setBodyFatMass, graphUpdateRequest.getBodyFatMass());
@@ -112,12 +112,11 @@ public class GraphServiceImpl implements GraphService{
 
     @Override
     public void deleteGraph(Integer graphId) {
-        Integer receiptCode = authenticationFacade.getId();
-        userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         Graph graph = graphRepository.findById(graphId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(GraphNotFoundException::new);
 
         graphRepository.deleteById(graph.getId());
     }

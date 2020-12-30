@@ -9,6 +9,8 @@ import undefined.muscle_up.muscleup.entitys.refresh_token.RefreshToken;
 import undefined.muscle_up.muscleup.entitys.refresh_token.reposiroty.RefreshTokenRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.InvalidTokenException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.request.AccountRequest;
 import undefined.muscle_up.muscleup.payload.response.TokenResponse;
 import undefined.muscle_up.muscleup.security.JwtProvider;
@@ -42,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
                     refreshTokenService.save(new RefreshToken(id, refreshToken, refreshExp));
                     return new TokenResponse(accessToken, refreshToken, tokenType);
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -60,6 +62,6 @@ public class AuthServiceImpl implements AuthService {
                     String generatedAccessToken = jwtProvider.generateAccessToken(refreshToken.getId());
                     return new TokenResponse(generatedAccessToken, refreshToken.getRefreshToken(), tokenType);
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(InvalidTokenException::new);
     }
 }

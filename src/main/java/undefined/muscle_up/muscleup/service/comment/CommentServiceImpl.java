@@ -10,6 +10,7 @@ import undefined.muscle_up.muscleup.entitys.qnaboard.QnaBoard;
 import undefined.muscle_up.muscleup.entitys.qnaboard.repository.QnaBoardRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.*;
 import undefined.muscle_up.muscleup.payload.request.CommentRequest;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardCommentResponse;
 import undefined.muscle_up.muscleup.payload.response.QnaBoardSubCommentResponse;
@@ -34,10 +35,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void postComment(Integer boardId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(BoardNotFoundException::new);
 
         commentRepository.save(
                 Comment.builder()
@@ -52,9 +53,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void postSubComment(Integer commentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
-        commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
+        commentRepository.findById(commentId).orElseThrow(CommnetNotFoundException::new);
 
         subCommentRepository.save(
                 SubComment.builder()
@@ -76,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
 
             for (SubComment subComment : subCommentRepository.findAllByCommentIdOrderByIdAsc(comment.getId())) {
                 User subCommentWriter = userRepository.findById(subComment.getUserId())
-                        .orElseThrow(RuntimeException::new);
+                        .orElseThrow(WriterNotFoundException::new);
 
                 subComments.add(
                         QnaBoardSubCommentResponse.builder()
@@ -89,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
                 );
             }
             User user = userRepository.findById(comment.getUserId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(UserNotFoundException::new);
 
             qnaBoardCommentResponses.add(
                     QnaBoardCommentResponse.builder()
@@ -108,12 +109,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void changeComment(Integer commentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CommnetNotFoundException::new);
 
-        if(!user.getId().equals(comment.getUserId())) throw new RuntimeException();
+        if(!user.getId().equals(comment.getUserId())) throw new WriterNotFoundException();
 
         commentRepository.save(comment.updateContent(commentRequest.getContent()));
     }
@@ -121,12 +122,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void changeSubComment(Integer subCommentId, CommentRequest commentRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         SubComment subComment = subCommentRepository.findById(subCommentId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CocommentNotFoundException::new);
 
-        if(!user.getId().equals(subComment.getUserId())) throw new RuntimeException();
+        if(!user.getId().equals(subComment.getUserId())) throw new WriterNotFoundException();
 
         subCommentRepository.save(subComment.updateSubContent(commentRequest.getContent()));
     }
@@ -135,12 +136,12 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void deleteComment(Integer commentId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CommnetNotFoundException::new);
 
-        if(!user.getId().equals(comment.getUserId())) throw new RuntimeException();
+        if(!user.getId().equals(comment.getUserId())) throw new WriterNotFoundException();
 
         subCommentRepository.deleteAllByCommentId(commentId);
         commentRepository.deleteById(commentId);
@@ -149,12 +150,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteSubComment(Integer subCommentId) {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         SubComment subComment = subCommentRepository.findById(subCommentId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CocommentNotFoundException::new);
 
-        if(!user.getId().equals(subComment.getUserId())) throw new RuntimeException();
+        if(!user.getId().equals(subComment.getUserId())) throw new WriterNotFoundException();
 
         subCommentRepository.deleteById(subCommentId);
     }

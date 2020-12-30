@@ -10,15 +10,16 @@ import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository
 import undefined.muscle_up.muscleup.entitys.user.User;
 import undefined.muscle_up.muscleup.entitys.user.enums.UserType;
 import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
+import undefined.muscle_up.muscleup.exceptions.FileNotFoundException;
+import undefined.muscle_up.muscleup.exceptions.UserAlreadyException;
+import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.SignUpRequest;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -37,9 +38,8 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public void signUp(SignUpRequest signUpRequest) {
-
        userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
-       throw new RuntimeException();
+       throw new UserAlreadyException();
         });
 
         User user = userRepository.save(
@@ -70,9 +70,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePw(String password) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         userRepository.save(user.updatePw(passwordEncoder.encode(password)));
     }
@@ -80,15 +79,14 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public void updateUser(UpdateRequest updateRequest) {
-        Integer receiptCode = authenticationFacade.getId();
-        User user = userRepository.findById(receiptCode)
-                .orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
 
         if (updateRequest.getImage() != null) {
             String fileName = UUID.randomUUID().toString();
 
             UserImage userImage = userImageRepository.findByUserId(user.getId())
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(FileNotFoundException::new);
 
             File file = new File(imagePath, userImage.getImageName());
             Files.deleteIfExists(file.toPath());
@@ -110,7 +108,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MainPageResponse mainPage() {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         return MainPageResponse.builder()
                 .name(user.getName())
