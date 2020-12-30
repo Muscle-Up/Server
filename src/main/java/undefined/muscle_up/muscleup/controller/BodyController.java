@@ -33,20 +33,13 @@ public class BodyController {
     @PostMapping
     public void bodyBoardCreate(@RequestParam String title,
                                 @RequestParam String content,
-                                @RequestParam MultipartFile[] bodyImages) {
-
-        for(MultipartFile file : bodyImages) {
-            if(!file.isEmpty()) {
-                System.out.println("no");
-            }
-        }
-
-        bodyService.bodyCreate(title, content, bodyImages);
+                                @RequestParam MultipartFile image) {
+        bodyService.bodyCreate(title, content, image);
     }
 
     @PostMapping("/image/{bodyId}")
     public void addBodyImage(@PathVariable Integer bodyId,
-                             @RequestParam MultipartFile[] images) {
+                             @RequestParam MultipartFile images) {
         bodyService.addBodyImage(images, bodyId);
     }
 
@@ -57,10 +50,10 @@ public class BodyController {
         bodyService.bodyUpdate(bodyUpdateRequest, bodyId);
     }
 
-    @PutMapping("/image/{imageName}")
+    @PutMapping("/image/{bodyId}")
     public void bodyImageUpdate(@RequestParam MultipartFile image,
-                                @PathVariable String imageName) {
-        bodyService.bodyImageUpdate(image, imageName);
+                                @PathVariable Integer bodyId) {
+        bodyService.bodyImageUpdate(image, bodyId);
     }
 
     @DeleteMapping("/{bodyId}")
