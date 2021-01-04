@@ -18,6 +18,7 @@ import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.request.BodyUpdateRequest;
 import undefined.muscle_up.muscleup.payload.response.BodyResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
+import undefined.muscle_up.muscleup.util.converter.notnull.SetIfNotNull;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -32,18 +33,14 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
-public class BodyServiceImpl implements BodyService {
+public class BodyServiceImpl implements BodyService{
+  
     private final BodyRepository bodyRepository;
     private final BodyImageRepository bodyImageRepository;
     private final UserRepository userRepository;
 
     private final AuthenticationFacade authenticationFacade;
-
-    private <T> void setIfNotNull(Consumer<T> setter, T value) {
-        if (value != null) {
-            setter.accept(value);
-        }
-    }
+    private final SetIfNotNull setIfNotNull;
 
     @Value("${body.image.upload.dir}")
     private String bodyImageDirPath;
@@ -161,8 +158,8 @@ public class BodyServiceImpl implements BodyService {
         Body body = bodyRepository.findById(bodyId)
                 .orElseThrow(BodyNotFoundException::new);
 
-        setIfNotNull(body::setTitle, bodyUpdateRequest.getTitle());
-        setIfNotNull(body::setContent, bodyUpdateRequest.getContent());
+        setIfNotNull.wholeNumberIfNotNull(body::setTitle, bodyUpdateRequest.getTitle());
+        setIfNotNull.wholeNumberIfNotNull(body::setContent, bodyUpdateRequest.getContent());
 
         bodyRepository.save(body);
     }
