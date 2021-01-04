@@ -17,11 +17,11 @@ import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.SignUpRequest;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
+import undefined.muscle_up.muscleup.util.converter.notnull.SetIfNotNull;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +29,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserImageRepository userImageRepository;
+
     private final AuthenticationFacade authenticationFacade;
     private final PasswordEncoder passwordEncoder;
+    private final SetIfNotNull setIfNotNull;
 
     @Value("${image.file.path}")
     private String imagePath;
@@ -96,10 +98,10 @@ public class UserServiceImpl implements UserService {
             updateRequest.getImage().transferTo(new File(imagePath, fileName));
         }
 
-        setIfNotNull(user::setAge, updateRequest.getAge());
-        setIfNotNull(user::setName, updateRequest.getName());
-        setIfNotNull(user::setHeight, updateRequest.getHeight());
-        setIfNotNull(user::setWeight, updateRequest.getWeight());
+        setIfNotNull.wholeNumberIfNotNull(user::setAge, updateRequest.getAge());
+        setIfNotNull.wholeNumberIfNotNull(user::setName, updateRequest.getName());
+        setIfNotNull.wholeNumberIfNotNull(user::setHeight, updateRequest.getHeight());
+        setIfNotNull.wholeNumberIfNotNull(user::setWeight, updateRequest.getWeight());
 
         userRepository.save(user);
 
@@ -117,11 +119,5 @@ public class UserServiceImpl implements UserService {
                 .sex(user.getSex())
                 .weight(user.getWeight())
                 .build();
-    }
-
-    private <T> void setIfNotNull(Consumer<T> setter, T value){
-        if(value != null){
-            setter.accept(value);
-        }
     }
 }
