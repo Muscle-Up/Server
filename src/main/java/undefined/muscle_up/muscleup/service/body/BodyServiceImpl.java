@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 @Service
 @RequiredArgsConstructor
 public class BodyServiceImpl implements BodyService{
-
+  
     private final BodyRepository bodyRepository;
     private final BodyImageRepository bodyImageRepository;
     private final UserRepository userRepository;
@@ -74,14 +74,20 @@ public class BodyServiceImpl implements BodyService{
     @Override
     public List<BodyResponse> getBodyList() {
         User user = userRepository.findById(authenticationFacade.getId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         List<Body> bodyList = bodyRepository.findAllByUserId(user.getId());
         List<BodyResponse> responses = new ArrayList<>();
 
-        for(Body body : bodyList) {
+
+        for (Body body : bodyList) {
             BodyImage bodyImage = bodyImageRepository.findByBodyId(body.getId())
-                    .orElseThrow(BodyImageNotFoundException::new);
+                    .orElse(
+                            BodyImage.builder()
+                            .bodyId(body.getId())
+                            .imageName("deleted")
+                            .build()
+                    );
 
             BodyResponse bodyResponse = BodyResponse.builder()
                     .bodyId(body.getId())
@@ -105,7 +111,7 @@ public class BodyServiceImpl implements BodyService{
                 .orElseThrow(UserNotFoundException::new);
 
         File file = new File(bodyImageDirPath, imageName);
-        if(!file.exists()) throw new RuntimeException();
+        if (!file.exists()) throw new BodyImageNotFoundException();
 
         InputStream input = new FileInputStream(file);
 
@@ -133,13 +139,12 @@ public class BodyServiceImpl implements BodyService{
     @SneakyThrows
     @Override
     @Transactional
-    public void bodyImageDelete(Integer bodyId) {
+    public void bodyImageDelete(String imageName) {
         userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(UserNotFoundException::new);
 
-        BodyImage bodyImage = bodyImageRepository.findByBodyId(bodyId)
+        BodyImage bodyImage = bodyImageRepository.findByImageName(imageName)
                 .orElseThrow(BodyImageNotFoundException::new);
-
         new File(bodyImageDirPath, bodyImage.getImageName()).delete();
 
         bodyImageRepository.deleteById(bodyImage.getId());
@@ -161,9 +166,31 @@ public class BodyServiceImpl implements BodyService{
 
     @SneakyThrows
     @Override
+    public void addBodyImage(MultipartFile image, Integer bodyId) {
+        userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
+
+        if(image.isEmpty())
+            throw new BodyImageNotFoundException();
+
+        String imageName = UUID.randomUUID().toString();
+
+        bodyImageRepository.save(
+                BodyImage.builder()
+                        .bodyId(bodyId)
+                        .imageName(imageName)
+                        .build()
+        );
+        image.transferTo(new File(bodyImageDirPath, imageName));
+    }
+
+    @SneakyThrows
+    @Override
     public void bodyImageUpdate(MultipartFile image, Integer bodyId) {
         userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(UserNotFoundException::new);
+
+        if(image.isEmpty()) throw new BodyImageNotFoundException();
 
         String imageName = UUID.randomUUID().toString();
 
@@ -171,11 +198,12 @@ public class BodyServiceImpl implements BodyService{
                 .orElseThrow(BodyImageNotFoundException::new);
 
         File file = new File(bodyImageDirPath, bodyImage.getImageName());
-        if(file.exists()) file.delete();
+        if (file.exists()) file.delete();
 
         bodyImageRepository.save(bodyImage.update(imageName));
 
         image.transferTo(new File(bodyImageDirPath, imageName));
     }
+
 }
 

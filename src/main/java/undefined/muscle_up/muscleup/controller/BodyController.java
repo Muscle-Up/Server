@@ -33,9 +33,14 @@ public class BodyController {
     @PostMapping
     public void bodyBoardCreate(@RequestParam String title,
                                 @RequestParam String content,
-                                @RequestParam MultipartFile bodyImage) {
+                                @RequestParam MultipartFile image) {
+        bodyService.bodyCreate(title, content, image);
+    }
 
-        bodyService.bodyCreate(title, content, bodyImage);
+    @PostMapping("/image/{bodyId}")
+    public void addBodyImage(@PathVariable Integer bodyId,
+                             @RequestParam MultipartFile images) {
+        bodyService.addBodyImage(images, bodyId);
     }
 
     @PutMapping("/{bodyId}")
@@ -56,11 +61,9 @@ public class BodyController {
         bodyService.bodyDelete(bodyId);
     }
 
-    @DeleteMapping("/image/{bodyId}")
-    public void bodyImageDelete(@PathVariable Integer bodyId) {
-        bodyService.bodyImageDelete(bodyId);
+    @DeleteMapping("/image/{imageName}")
+    public void bodyImageDelete(@PathVariable String imageName) {
+        bodyService.bodyImageDelete(imageName);
     }
-
-
 
 }

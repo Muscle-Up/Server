@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface BodyRepository extends CrudRepository<Body, Integer> {
-    List<Body> findAllByUserId(Integer userID);
+    List<Body> findAllByUserId(Integer userId);
 }
