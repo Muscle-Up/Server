@@ -13,26 +13,22 @@ import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
 import undefined.muscle_up.muscleup.payload.request.GraphRequest;
 import undefined.muscle_up.muscleup.payload.response.GraphResponse;
 import undefined.muscle_up.muscleup.security.auth.AuthenticationFacade;
+import undefined.muscle_up.muscleup.util.converter.notnull.SetIfNotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-
 @Service
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService{
+
     private final UserRepository userRepository;
     private final  GraphRepository graphRepository;
 
     private final AuthenticationFacade authenticationFacade;
-
-    private <T> void setIfNotNull(Consumer<T> setter, T value) {
-        if(!value.equals(0.0)) {
-            setter.accept(value);
-        }
-    }
+    private final SetIfNotNull setIfNotNull;
 
     private double getCheckAndValue(GraphType type, Graph graph) {
         if(type.equals(GraphType.muscleMass))
@@ -103,9 +99,9 @@ public class GraphServiceImpl implements GraphService{
         Graph graph = graphRepository.findById(graphId)
                 .orElseThrow(GraphNotFoundException::new);
 
-        setIfNotNull(graph::setMuscleMass, graphUpdateRequest.getMuscleMass());
-        setIfNotNull(graph::setBodyFatMass, graphUpdateRequest.getBodyFatMass());
-        setIfNotNull(graph::setWeight, graphUpdateRequest.getWeight());
+        setIfNotNull.minorityIfNotNull(graph::setMuscleMass, graphUpdateRequest.getMuscleMass());
+        setIfNotNull.minorityIfNotNull(graph::setBodyFatMass, graphUpdateRequest.getBodyFatMass());
+        setIfNotNull.minorityIfNotNull(graph::setWeight, graphUpdateRequest.getWeight());
 
         graphRepository.save(graph);
     }
