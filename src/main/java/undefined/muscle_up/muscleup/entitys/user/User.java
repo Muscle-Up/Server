@@ -1,6 +1,7 @@
 package undefined.muscle_up.muscleup.entitys.user;
 
 import lombok.*;
+import undefined.muscle_up.muscleup.entitys.ban.BanUser;
 import undefined.muscle_up.muscleup.entitys.image.MasterImage;
 import undefined.muscle_up.muscleup.entitys.image.UserImage;
 import undefined.muscle_up.muscleup.entitys.user.enums.Sex;
