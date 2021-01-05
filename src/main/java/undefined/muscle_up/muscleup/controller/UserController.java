@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import undefined.muscle_up.muscleup.entitys.user.enums.Sex;
+import undefined.muscle_up.muscleup.payload.request.BanUserIdRequest;
 import undefined.muscle_up.muscleup.payload.request.ChangePwRequest;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
@@ -18,6 +19,16 @@ import javax.validation.constraints.Email;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping
+    public MainPageResponse mainPage() {
+        return userService.mainPage();
+    }
+
+    @GetMapping("ban")
+    public void banUser(@RequestBody BanUserIdRequest banUserIdRequest) {
+        userService.banUser(banUserIdRequest);
+    }
 
     @PostMapping
     public void signUp(@RequestParam String name,
@@ -64,11 +75,6 @@ public class UserController {
     @PutMapping
     public void changePw(@RequestBody String password) {
         userService.changePw(password);
-    }
-
-    @GetMapping
-    public MainPageResponse mainPage() {
-        return userService.mainPage();
     }
 
 }
