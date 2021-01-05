@@ -11,6 +11,5 @@ import java.util.Optional;
 public interface BodyImageRepository extends CrudRepository<BodyImage, Integer> {
     Optional<BodyImage> findByBodyId(Integer bodyId);
     Optional<BodyImage> findByImageName(String imageName);
-    List<BodyImage> findAllByBodyId(Integer bodyId);
     void deleteById(Integer id);
 }
