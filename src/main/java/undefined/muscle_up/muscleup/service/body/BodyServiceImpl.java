@@ -29,12 +29,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
 public class BodyServiceImpl implements BodyService{
-  
+
     private final BodyRepository bodyRepository;
     private final BodyImageRepository bodyImageRepository;
     private final UserRepository userRepository;
