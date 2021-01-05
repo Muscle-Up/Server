@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import undefined.muscle_up.muscleup.entitys.ban.BanUser;
+import undefined.muscle_up.muscleup.entitys.ban.repository.BanUserRepository;
 import undefined.muscle_up.muscleup.entitys.image.UserImage;
 import undefined.muscle_up.muscleup.entitys.image.repository.UserImageRepository;
 import undefined.muscle_up.muscleup.entitys.user.User;
@@ -13,6 +15,7 @@ import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.exceptions.FileNotFoundException;
 import undefined.muscle_up.muscleup.exceptions.UserAlreadyException;
 import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
+import undefined.muscle_up.muscleup.payload.request.BanUserIdRequest;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.SignUpRequest;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BanUserRepository banUserRepository;
     private final UserImageRepository userImageRepository;
 
     private final AuthenticationFacade authenticationFacade;
@@ -36,6 +40,20 @@ public class UserServiceImpl implements UserService {
 
     @Value("${image.file.path}")
     private String imagePath;
+
+    @Override
+    public void banUser(BanUserIdRequest banUserIdRequest) {
+        User user = userRepository.findById(authenticationFacade.getId())
+                .orElseThrow(UserNotFoundException::new);
+
+        User blockOutPeople = userRepository.findById(banUserIdRequest.getUserId())
+                .orElseThrow(UserNotFoundException::new);
+
+        BanUser.builder()
+                .blockerPeople(user.getId())
+                .blockOutPeople(blockOutPeople.getId())
+                .build();
+    }
 
     @SneakyThrows
     @Override
