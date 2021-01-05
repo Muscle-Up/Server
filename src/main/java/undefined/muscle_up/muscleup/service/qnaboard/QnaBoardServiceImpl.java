@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import undefined.muscle_up.muscleup.entitys.ban.repository.BoardBanRepository;
+import undefined.muscle_up.muscleup.entitys.ban.repository.BanUserRepository;
 import undefined.muscle_up.muscleup.entitys.image.QnaImage;
 import undefined.muscle_up.muscleup.entitys.image.repository.QnaImageRepository;
 import undefined.muscle_up.muscleup.entitys.qnaboard.QnaBoard;
@@ -41,7 +41,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     private final UserRepository userRepository;
     private final QnaImageRepository qnaImageRepository;
     private final QnaBoardRepository qnaBoardRepository;
-    private final BoardBanRepository boardBanRepository;
+    private final BanUserRepository banUserRepository;
     private final QnaBoardViewRepository qnaBoardViewRepository;
     private final QnaBoardLikeRepository qnaBoardLikeRepository;
 
@@ -87,12 +87,15 @@ public class QnaBoardServiceImpl implements QnaBoardService {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(UserNotFoundException::new);
 
-        Page<QnaBoard> qnaBoards = qnaBoardRepository.findAll(pageable);
+        int startIndex = pageable.getPageNumber() * pageable.getPageSize();
+        int endIndex = startIndex + pageable.getPageSize() - 1;
+        Page<QnaBoard> qnaBoards = qnaBoardRepository.findAllBoardsWithoutBlockOut(user.getId(), startIndex, endIndex);
         List<QnaBoardListResponse> listResponses = new ArrayList<>();
 
         for (QnaBoard qnaBoard : qnaBoards) {
             User writer = userRepository.findById(qnaBoard.getUserId())
                     .orElseThrow(WriterNotFoundException::new);
+
 
             listResponses.add(
                     QnaBoardListResponse.builder()
