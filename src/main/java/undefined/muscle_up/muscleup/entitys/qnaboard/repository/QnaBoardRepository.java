@@ -15,4 +15,7 @@ public interface QnaBoardRepository extends JpaRepository<QnaBoard, Integer> {
 
     @Query(value = "select qna.* from qna_board as qna join ban_user as ban on ban.blocker_people = :userId where qna.user_id != ban.block_out_people limit :startIndex, :endIndex", nativeQuery = true)
     List<QnaBoard> findAllBoardsWithoutBlockOut(Integer userId, Integer startIndex, Integer endIndex);
+
+    @Query(value = "", nativeQuery = true)
+    Integer findAllBoardWithoutBlockOutCount();
 }

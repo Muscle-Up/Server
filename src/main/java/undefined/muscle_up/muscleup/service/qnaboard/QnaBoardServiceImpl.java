@@ -41,7 +41,6 @@ public class QnaBoardServiceImpl implements QnaBoardService {
     private final UserRepository userRepository;
     private final QnaImageRepository qnaImageRepository;
     private final QnaBoardRepository qnaBoardRepository;
-    private final BanUserRepository banUserRepository;
     private final QnaBoardViewRepository qnaBoardViewRepository;
     private final QnaBoardLikeRepository qnaBoardLikeRepository;
 
@@ -89,7 +88,7 @@ public class QnaBoardServiceImpl implements QnaBoardService {
 
         int startIndex = pageable.getPageNumber() * pageable.getPageSize();
         int endIndex = startIndex + pageable.getPageSize() - 1;
-        Page<QnaBoard> qnaBoards = qnaBoardRepository.findAllBoardsWithoutBlockOut(user.getId(), startIndex, endIndex);
+        List<QnaBoard> qnaBoards = qnaBoardRepository.findAllBoardsWithoutBlockOut(user.getId(), startIndex, endIndex);
         List<QnaBoardListResponse> listResponses = new ArrayList<>();
 
         for (QnaBoard qnaBoard : qnaBoards) {

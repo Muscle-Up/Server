@@ -1,7 +1,6 @@
 package undefined.muscle_up.muscleup.entitys.qnaboard;
 
 import lombok.*;
-import undefined.muscle_up.muscleup.entitys.ban.BanUser;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,6 +27,8 @@ public class QnaBoard {
     private Integer likeCount;
 
     private LocalDateTime createdAt;
+
+    private Integer totalElements;
 
     public QnaBoard view() {
         view++;
