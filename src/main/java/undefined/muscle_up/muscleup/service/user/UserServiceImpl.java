@@ -13,6 +13,7 @@ import undefined.muscle_up.muscleup.entitys.user.repository.UserRepository;
 import undefined.muscle_up.muscleup.exceptions.FileNotFoundException;
 import undefined.muscle_up.muscleup.exceptions.UserAlreadyException;
 import undefined.muscle_up.muscleup.exceptions.UserNotFoundException;
+import undefined.muscle_up.muscleup.payload.request.ChangePwRequest;
 import undefined.muscle_up.muscleup.payload.response.MainPageResponse;
 import undefined.muscle_up.muscleup.payload.request.SignUpRequest;
 import undefined.muscle_up.muscleup.payload.request.UpdateRequest;
@@ -71,11 +72,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePw(String password) {
+    public void changePw(ChangePwRequest changePwRequest) {
         User user = userRepository.findById(authenticationFacade.getId())
                 .orElseThrow(UserNotFoundException::new);
 
-        userRepository.save(user.updatePw(passwordEncoder.encode(password)));
+        userRepository.save(user.updatePw(passwordEncoder.encode(changePwRequest.getPassword())));
     }
 
     @SneakyThrows
